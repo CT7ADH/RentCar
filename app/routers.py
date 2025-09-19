@@ -5,11 +5,7 @@ from flask import render_template, url_for
 @app.route("/index.html")
 def home():
     return render_template("index.html")
-"""
-@app.route("/index.html")
-def index():
-    return render_template("index.html")
-"""
+
 @app.route("/car-list.html")
 def car_list():
     return render_template("car-list.html")
