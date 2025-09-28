@@ -58,3 +58,11 @@ Critérios Técnicos:
     ultima inspeção obrigatoria e etc;
 3.  O sistema deve alertar ao gestor que os veículos precisarão de revisão 5 dias antes da data da proxima revisão.
 4.  O gestor da frota deve ter a opção de indicar que o veículo está em manutenção e o mesmo ficará indisponivel para alugar;
+
+
+***
+### commands:  
+criar o requirements.txt
+
+    pip freeze > requirements.txt
+
