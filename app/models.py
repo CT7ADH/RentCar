@@ -7,6 +7,8 @@ from app import db
 """
 uma vez comfiguradas todas as tabelas para criar a base de dados temos que rodar o comando "flask db init", 
 só se roda este comando uma vez por projecto.
+- fazer o migrate despois de qualquer alteração: 'flask db migrate -m "[mensagem migrate]"
+- salvar o commit no banco de Dados: flask db upgrade
 """
 
 class Clientes(db.Model):
@@ -40,7 +42,7 @@ class FormasPagamento(db.Model):
 class Reservas(db.Model):
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
-    veiculo_id = db.Column(db.Integer, db.ForeignKey('veicuos.id'), nullable=False)
+    veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'), nullable=False)
     data_inicio = db.Column(db.String(10), nullable=False)
     data_fim = db.Column(db.String(10), nullable=False)
     valor_total = db.Column(db.Float, nullable=False)
