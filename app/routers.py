@@ -26,3 +26,7 @@ def reserva():
 def contact():
     return render_template("contact.html")
 
+@app.route("/admin/")
+def test():
+    return render_template("admin.html")
+
