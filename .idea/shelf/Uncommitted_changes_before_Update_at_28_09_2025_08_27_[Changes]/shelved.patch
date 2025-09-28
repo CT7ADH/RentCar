@@ -1,0 +1,63 @@
+Index: .idea/workspace.xml
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+><?xml version=\"1.0\" encoding=\"UTF-8\"?>\r\n<project version=\"4\">\r\n  <component name=\"AutoImportSettings\">\r\n    <option name=\"autoReloadType\" value=\"SELECTIVE\" />\r\n  </component>\r\n  <component name=\"ChangeListManager\">\r\n    <list default=\"true\" id=\"b8fb007d-b798-466d-840d-09e7fc942874\" name=\"Changes\" comment=\"- Ajuste dos HTML para abrir os &quot;static&quot;\">\r\n      <change beforePath=\"$PROJECT_DIR$/.idea/workspace.xml\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/.idea/workspace.xml\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/car-list.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/car-list.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/contact.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/contact.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/index.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/index.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/login.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/login.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/registration.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/registration.html\" afterDir=\"false\" />\r\n      <change beforePath=\"$PROJECT_DIR$/app/templates/reserva.html\" beforeDir=\"false\" afterPath=\"$PROJECT_DIR$/app/templates/reserva.html\" afterDir=\"false\" />\r\n    </list>\r\n    <option name=\"SHOW_DIALOG\" value=\"false\" />\r\n    <option name=\"HIGHLIGHT_CONFLICTS\" value=\"true\" />\r\n    <option name=\"HIGHLIGHT_NON_ACTIVE_CHANGELIST\" value=\"false\" />\r\n    <option name=\"LAST_RESOLUTION\" value=\"IGNORE\" />\r\n  </component>\r\n  <component name=\"FileTemplateManagerImpl\">\r\n    <option name=\"RECENT_TEMPLATES\">\r\n      <list>\r\n        <option value=\"Python Script\" />\r\n      </list>\r\n    </option>\r\n  </component>\r\n  <component name=\"Git.Settings\">\r\n    <option name=\"RECENT_GIT_ROOT_PATH\" value=\"$PROJECT_DIR$\" />\r\n  </component>\r\n  <component name=\"GitHubPullRequestSearchHistory\"><![CDATA[{\r\n  \"lastFilter\": {\r\n    \"state\": \"OPEN\",\r\n    \"assignee\": \"CT7ADH\"\r\n  }\r\n}]]></component>\r\n  <component name=\"GithubPullRequestsUISettings\"><![CDATA[{\r\n  \"selectedUrlAndAccountId\": {\r\n    \"url\": \"https://github.com/CT7ADH/RentCar.git\",\r\n    \"accountId\": \"c5030d24-c0fb-45d0-9ae5-daf6298b5c43\"\r\n  }\r\n}]]></component>\r\n  <component name=\"ProjectColorInfo\">{\r\n  &quot;associatedIndex&quot;: 3\r\n}</component>\r\n  <component name=\"ProjectId\" id=\"32otRbArShhYU8Vi5DIyTh6M5ud\" />\r\n  <component name=\"ProjectViewState\">\r\n    <option name=\"hideEmptyMiddlePackages\" value=\"true\" />\r\n    <option name=\"showLibraryContents\" value=\"true\" />\r\n  </component>\r\n  <component name=\"PropertiesComponent\"><![CDATA[{\r\n  \"keyToString\": {\r\n    \"ModuleVcsDetector.initialDetectionPerformed\": \"true\",\r\n    \"Python.__init__.executor\": \"Run\",\r\n    \"Python.main.executor\": \"Run\",\r\n    \"Python.routers.executor\": \"Run\",\r\n    \"RunOnceActivity.ShowReadmeOnStart\": \"true\",\r\n    \"RunOnceActivity.TerminalTabsStorage.copyFrom.TerminalArrangementManager.252\": \"true\",\r\n    \"RunOnceActivity.git.unshallow\": \"true\",\r\n    \"git-widget-placeholder\": \"master\",\r\n    \"ignore.virus.scanning.warn.message\": \"true\",\r\n    \"node.js.detected.package.eslint\": \"true\",\r\n    \"node.js.detected.package.tslint\": \"true\",\r\n    \"node.js.selected.package.eslint\": \"(autodetect)\",\r\n    \"node.js.selected.package.tslint\": \"(autodetect)\",\r\n    \"nodejs_package_manager_path\": \"npm\",\r\n    \"settings.editor.selected.configurable\": \"com.jetbrains.python.configuration.PyActiveSdkModuleConfigurable\",\r\n    \"vue.rearranger.settings.migration\": \"true\"\r\n  }\r\n}]]></component>\r\n  <component name=\"SharedIndexes\">\r\n    <attachedChunks>\r\n      <set>\r\n        <option value=\"bundled-js-predefined-d6986cc7102b-b598e85cdad2-JavaScript-PY-252.25557.178\" />\r\n        <option value=\"bundled-python-sdk-ce6832f46686-7b97d883f26b-com.jetbrains.pycharm.pro.sharedIndexes.bundled-PY-252.25557.178\" />\r\n      </set>\r\n    </attachedChunks>\r\n  </component>\r\n  <component name=\"TaskManager\">\r\n    <task active=\"true\" id=\"Default\" summary=\"Default task\">\r\n      <changelist id=\"b8fb007d-b798-466d-840d-09e7fc942874\" name=\"Changes\" comment=\"\" />\r\n      <created>1758098745703</created>\r\n      <option name=\"number\" value=\"Default\" />\r\n      <option name=\"presentableId\" value=\"Default\" />\r\n      <updated>1758098745703</updated>\r\n      <workItem from=\"1758295753603\" duration=\"4511000\" />\r\n    </task>\r\n    <task id=\"LOCAL-00001\" summary=\"- Clone no HomePC&#10;- criar o requirements.txt\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1758296348166</created>\r\n      <option name=\"number\" value=\"00001\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00001\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1758296348166</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00002\" summary=\"- Ajuste dos HTML para abrir os &quot;static&quot;\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1758301187297</created>\r\n      <option name=\"number\" value=\"00002\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00002\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1758301187297</updated>\r\n    </task>\r\n    <task id=\"LOCAL-00003\" summary=\"- Ajuste dos HTML para abrir os &quot;static&quot;\">\r\n      <option name=\"closed\" value=\"true\" />\r\n      <created>1758301267301</created>\r\n      <option name=\"number\" value=\"00003\" />\r\n      <option name=\"presentableId\" value=\"LOCAL-00003\" />\r\n      <option name=\"project\" value=\"LOCAL\" />\r\n      <updated>1758301267301</updated>\r\n    </task>\r\n    <option name=\"localTasksCounter\" value=\"4\" />\r\n    <servers />\r\n  </component>\r\n  <component name=\"TypeScriptGeneratedFilesManager\">\r\n    <option name=\"version\" value=\"3\" />\r\n  </component>\r\n  <component name=\"Vcs.Log.Tabs.Properties\">\r\n    <option name=\"TAB_STATES\">\r\n      <map>\r\n        <entry key=\"MAIN\">\r\n          <value>\r\n            <State />\r\n          </value>\r\n        </entry>\r\n      </map>\r\n    </option>\r\n  </component>\r\n  <component name=\"VcsManagerConfiguration\">\r\n    <MESSAGE value=\"- Clone no HomePC&#10;- criar o requirements.txt\" />\r\n    <MESSAGE value=\"- Ajuste dos HTML para abrir os &quot;static&quot;\" />\r\n    <option name=\"LAST_COMMIT_MESSAGE\" value=\"- Ajuste dos HTML para abrir os &quot;static&quot;\" />\r\n  </component>\r\n  <component name=\"com.intellij.coverage.CoverageDataManagerImpl\">\r\n    <SUITE FILE_PATH=\"coverage/RentCar$routers.coverage\" NAME=\"routers Coverage Results\" MODIFIED=\"1758301597474\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$/app\" />\r\n    <SUITE FILE_PATH=\"coverage/RentCar$main.coverage\" NAME=\"main Coverage Results\" MODIFIED=\"1758301613639\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$\" />\r\n    <SUITE FILE_PATH=\"coverage/RentCar$__init__.coverage\" NAME=\"__init__ Coverage Results\" MODIFIED=\"1758296420026\" SOURCE_PROVIDER=\"com.intellij.coverage.DefaultCoverageFileProvider\" RUNNER=\"coverage.py\" COVERAGE_BY_TEST_ENABLED=\"false\" COVERAGE_TRACING_ENABLED=\"false\" WORKING_DIRECTORY=\"$PROJECT_DIR$/app\" />\r\n  </component>\r\n</project>
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/.idea/workspace.xml b/.idea/workspace.xml
+--- a/.idea/workspace.xml	(revision 9903369bc9fa6c6ef7208bea42d15f0429081534)
++++ b/.idea/workspace.xml	(date 1758302469945)
+@@ -4,15 +4,7 @@
+     <option name="autoReloadType" value="SELECTIVE" />
+   </component>
+   <component name="ChangeListManager">
+-    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="- Ajuste dos HTML para abrir os &quot;static&quot;">
+-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/car-list.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/car-list.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/contact.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/login.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/registration.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/registration.html" afterDir="false" />
+-      <change beforePath="$PROJECT_DIR$/app/templates/reserva.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/reserva.html" afterDir="false" />
+-    </list>
++    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="- Identação dos HTML" />
+     <option name="SHOW_DIALOG" value="false" />
+     <option name="HIGHLIGHT_CONFLICTS" value="true" />
+     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+@@ -83,7 +75,7 @@
+       <option name="number" value="Default" />
+       <option name="presentableId" value="Default" />
+       <updated>1758098745703</updated>
+-      <workItem from="1758295753603" duration="4511000" />
++      <workItem from="1758295753603" duration="4650000" />
+     </task>
+     <task id="LOCAL-00001" summary="- Clone no HomePC&#10;- criar o requirements.txt">
+       <option name="closed" value="true" />
+@@ -109,7 +101,15 @@
+       <option name="project" value="LOCAL" />
+       <updated>1758301267301</updated>
+     </task>
+-    <option name="localTasksCounter" value="4" />
++    <task id="LOCAL-00004" summary="- Identação dos HTML">
++      <option name="closed" value="true" />
++      <created>1758302377971</created>
++      <option name="number" value="00004" />
++      <option name="presentableId" value="LOCAL-00004" />
++      <option name="project" value="LOCAL" />
++      <updated>1758302377971</updated>
++    </task>
++    <option name="localTasksCounter" value="5" />
+     <servers />
+   </component>
+   <component name="TypeScriptGeneratedFilesManager">
+@@ -129,7 +129,8 @@
+   <component name="VcsManagerConfiguration">
+     <MESSAGE value="- Clone no HomePC&#10;- criar o requirements.txt" />
+     <MESSAGE value="- Ajuste dos HTML para abrir os &quot;static&quot;" />
+-    <option name="LAST_COMMIT_MESSAGE" value="- Ajuste dos HTML para abrir os &quot;static&quot;" />
++    <MESSAGE value="- Identação dos HTML" />
++    <option name="LAST_COMMIT_MESSAGE" value="- Identação dos HTML" />
+   </component>
+   <component name="com.intellij.coverage.CoverageDataManagerImpl">
+     <SUITE FILE_PATH="coverage/RentCar$routers.coverage" NAME="routers Coverage Results" MODIFIED="1758301597474" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
