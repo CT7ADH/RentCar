@@ -14,7 +14,7 @@ só se roda este comando uma vez por projecto.
 class Clientes(db.Model):
     __tablename__ = 'clientes'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
     senha_hash = db.Column(db.String(128), nullable=False)
@@ -29,7 +29,7 @@ class Clientes(db.Model):
 class Veiculos(db.Model):
     __tablename__ = 'veiculos'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     marca = db.Column(db.String(50), nullable=False)
     modelo = db.Column(db.String(50), nullable=False)
     categoria = db.Column(db.String(20), nullable=False)  # Pequeno, Médio, Grande, SUV, Luxo
@@ -53,7 +53,7 @@ class FormasPagamento(db.Model):        # MB, MBway, CCredito,
 class Reservas(db.Model):
     __tablename__ = 'reservas'
 
-    id = db.Column(db.Integer, primary_key=True)
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
     veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'), nullable=False)
     forma_pagamento_id = db.Column(db.Integer, db.ForeignKey('formas_pagamento.id'), nullable=False)

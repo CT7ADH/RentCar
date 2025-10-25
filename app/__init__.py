@@ -13,5 +13,5 @@ migrate = Migrate(app, db)
 
 # Importa-se sempre no final do ficheiro
 from app.routes import home
-from app.models import Clientes, Veiculos, Reservas,FormasPagamento
+from app.models import Clientes, Veiculos, Reservas, FormasPagamento
 #app.register_blueprint(home)
