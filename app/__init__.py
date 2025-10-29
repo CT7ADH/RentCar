@@ -15,6 +15,6 @@ bcrypt = Bcrypt(app)
 
 
 # Importa-se sempre no final do ficheiro
-from app.routes import home, login, car_list,contact
+from app import routes
 from app.models import Cliente, Veiculo, Reserva, FormasPagamento
 #app.register_blueprint(home)

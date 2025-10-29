@@ -29,10 +29,11 @@
                                 <div class="col-lg-4 col-md-5 col-sm-6">
                                     <div class="cart-sort-field">
                                         <span class="caption">Ordenar por : </span>
-                                        <select>
-                                            <option>Pajero Range</option>
-                                            <option>Toyota Axio</option>
-                                            <option>Lancer</option>
+                                        <select name="ordenar" id="ordenar">
+                                            <option value="">Todos os Veículos</option>
+                                            {% for veiculo in veiculos %}
+                                            <option value="{{ veiculo.id }}">{{ veiculo.marca }} {{ veiculo.modelo }}</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                 </div>
@@ -54,126 +55,28 @@
         <div class="row mt-70">
             <div class="col-lg-8">
                 <div class="car-search-result-area grid--view row mb-none-30">
+                    {% for veiculo in veiculos %}
                     <div class="col-md-6 col-12">
                         <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/4.jpg"></div>
+                            <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem) if veiculo.imagem else url_for('static', filename='images/cars/default.jpg') }}"></div>
                             <div class="car-item-body">
                                 <div class="content">
-                                    <h4 class="title">pajero rang</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
+                                    <h4 class="title">{{ veiculo.marca }} {{ veiculo.modelo }}</h4>
+                                    <span class="price">a partir de {{ veiculo.preco_diario }}€ por dia</span>
+                                    <p>{{ veiculo.descricao if veiculo.descricao else 'Veículo disponível para aluguel.' }}</p>
+                                    <a class="cmn-btn" href="{{ url_for('detalhes_veiculo', veiculo_id=veiculo.id) }}">alugar carro</a>
                                 </div>
                                 <div class="car-item-meta">
                                     <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
+                                        <li><i class="fa fa-car"></i>{{ veiculo.ano }}</li>
+                                        <li><i class="fa fa-tachometer"></i>{{ veiculo.quilometragem }} KM</li>
+                                        <li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
                                     </ul>
                                 </div>
                             </div>
                         </div>
-                    </div><!-- car-item end -->
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/5.jpg"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title">mirage range</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- car-item end -->
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/6.jpg"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title">Volkswagen</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- car-item end -->
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/7.jpg"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title">Rools royce</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- car-item end -->
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/8.jpg"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title"> Toyota</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- car-item end -->
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="static/images/cars/9.jpg"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title"> Porsche</h4>
-                                    <span class="price">a partir de 20$ por dia</span>
-                                    <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                                    <a class="cmn-btn" href="#0">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>model 2014ib</li>
-                                        <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                                        <li><i class="fa fa-sliders"></i>auto</li>
-                                    </ul>
-                                </div>
-                            </div>
-                        </div>
-                    </div><!-- car-item end -->
+                    </div>
+                    {% endfor %}
                 </div>
                 <nav aria-label="Page navigation example" class="d-pagination">
                     <ul class="pagination justify-content-center">
@@ -193,10 +96,11 @@
                             <form class="car-search-form">
                                 <div class="row">
                                     <div class="col-lg-12 form-group">
-                                        <select>
-                                            <option selected="" value="1">Escolha o Tipo de Carro</option>
-                                            <option value="2">Another option</option>
-                                            <option value="4">Potato</option>
+                                        <select name="veiculo_id" required>
+                                            <option value="">Escolha o Tipo de Carro</option>
+                                            {% for veiculo in veiculos %}
+                                            <option value="{{ veiculo.id }}">{{ veiculo.marca }} {{ veiculo.modelo }} - {{ veiculo.preco_diario }}€/dia</option>
+                                            {% endfor %}
                                         </select>
                                     </div>
                                     <div class="form-group col-md-12">

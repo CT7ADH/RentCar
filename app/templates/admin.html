@@ -2,53 +2,109 @@
 
 {% block content %}
 
-    <
-<!-- Clientes-section start -->
+<!-- Flash mensage renderization start -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+  {% if messages %}
+    <div class="container mt-1">
+      {% for category, message in messages %}
+        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+          {{ message }}
+          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+      {% endfor %}
+    </div>
+  {% endif %}
+{% endwith %}
+<!-- Flash mensage renderization end -->
+
+<!-- Administrar Veiculos-section start -->
+    <section class="login-section pt-120 pb-120">
     <div class="container">
-        <h3>Pagina de teste da base de dados</h3>
-        <h4>Clientes</h4>
         <div class="row">
-            <form action="" method="post">
-                <div class="col-12">
-                    Nome
-                    <input type="text" name="Nome" id="">
-                    E-mail
-                    <input type="email" name="Email" id="">
-                    Password
-                    <input type="password" name="Password" id="">
-                    <input type="button" value="Submeter">
+            <div class="col-lg-12">
+                <div class="login-block text-center">
+                    <div class="login-block-inner">
+                        <h3 class="title">Administrar Veiculos </h3>
+                        <form class="login-form" action="{{ url_for('admin') }}" method="post">
+                            <div class="frm-group">
+                                <input id="marca" name="marca" placeholder="Marca" type="text" size="50" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input id="modelo" name="modelo" placeholder="Modelo" type="text" size="50" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input list="categorias" id="categoria" name="categoria" placeholder="Digite ou selecione: Categoria" size="20" required/>
+                                    <datalist id="categorias">
+                                      <option value="Pequeno">
+                                      <option value="Médio">
+                                      <option value="Grande">
+                                      <option value="SUV">
+                                      <option value="Luxo">
+                                    </datalist>
+                            </div>
+                            <div class="frm-group">
+                                <input list="transmissões" id="transmissao" name="transmissao" placeholder="Digite ou selecione: Transmissão" size="20" required/>
+                                    <datalist id="transmissões">
+                                      <option value="Automatico">
+                                      <option value="Manual">
+                                    </datalist>
+                            </div>
+                            <div class="frm-group">
+                                <input list="tipo_veiculos" id="tipo_veiculo" name="tipo_veiculo" placeholder="Digite ou selecione: Tipo de Veiculo" size="10" required/>
+                                    <datalist id="tipo_veiculos">
+                                      <option value="Carro">
+                                      <option value="Mota">
+                                    </datalist>
+                            </div>
+                            <div class="frm-group">
+                                <input type="number" name="capacidade_pessoas" id="capacidade_pessoas" placeholder="Capacidade de Pessoas" min="2" max="9" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input type="number" name="valor_diaria" id="valor_diaria" step="0.01" min="0" placeholder="Valor da Diaria" size="10" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input type="text" name="imagem_url" id="imagem_url" size="255" placeholder="URL da Imagem"/>
+                            </div>
+                            <div class="frm-group">
+                                <input type="text" name="matricula" id="matricula" size="10" placeholder="Matricula do Veiculo" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input type="text" name="cor" id="cor" size="30" placeholder="Cor do Veiculo" required/>
+                            </div>
+                            <div class="frm-group">
+                                <input type="number" name="ano" id="ano" step="1" min="0" placeholder="Ano do Veiculo" required/>
+                            </div>
+                            <div class="col-lg-6 frm-group">
+                                <input type="number" name="kilometragem" id="kilometragem" step="1" min="1" placeholder="Kilometragem"/>
+                            </div>
+                            <div class="col-lg-6 frm-group">
+                                <label for="data_ultima_revisao">Data Ultima Revisão:</label>
+                                <input type="date" name="data_ultima_revisao" id="data_ultima_revisao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
+                            </div>
+                            <div class="col-lg-6 frm-group ">
+                                <label for="data_proxima_revisao">Data Proxima Revisão:</label>
+                                <input type="date" name="data_proxima_revisao" id="data_proxima_revisao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
+                            </div>
+                            <div class="col-lg-6 frm-group ">
+                                <label for="data_ultima_inspecao">Data Ultima Inspeção:</label>
+                                <input type="date" name="data_ultima_inspecao" id="data_ultima_inspecao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
+                            </div>
+
+
+
+
+
+                            <div class="frm-group">
+                                <input type="submit" value="Adicionar Veiculo"/>
+                            </div>
+                        </form>
+                    </div>
                 </div>
-            </form>
+            </div>
         </div>
     </div>
-        <div class="row">
-            <form action="" method="get">
+</section>
+<!-- Administrar Veiculos-section end -->
 
-            </form>
-        </div>
-    <hr>
-    </div>  
-<!-- Clientes-section end -->
-<!-- Veiculos-section start -->
-    <div class="container">
-        <h4>Veiculos</h4>
-        <dic class="row">
-
-        </dic>
-
-    <hr>
-    </div>
-        
-<!-- Veiculos-section end -->
-<!-- Reservas-section start -->
-    <div class="container">
-        <h4>Veiculos</h4>
-        <dic class="row">
-
-        </dic>
-
-    <hr>
-    </div>
-<!-- Reservas-section end -->
       
 {% endblock %}

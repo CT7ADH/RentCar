@@ -149,13 +149,12 @@ def registration():
     return render_template("registration.html")
 
 
-@app.route("/reserva", methods=["GET", "POST"])
+@app.route("/reserva/<int:veiculo_id>", methods=["GET", "POST"])
 @login_required
 def reserva(veiculo_id):
     """Criar nova reserva"""
     veiculo = Veiculo.query.get_or_404(veiculo_id)
     formas_pagamento = FormasPagamento.query.filter_by(ativo=True).all()
-    hoje = date.today().strftime('%Y-%m-%d')
     
     if request.method == "POST":
         try:
@@ -203,7 +202,7 @@ def reserva(veiculo_id):
             db.session.rollback()
             flash(f'Erro ao criar reserva: {str(e)}', 'danger')
     
-    return render_template("reserva.html", veiculo=veiculo, formas_pagamento=formas_pagamento, today=hoje)
+    return render_template("reserva.html", veiculo=veiculo, formas_pagamento=formas_pagamento)
 
 
 @app.route("/minhas-reservas")

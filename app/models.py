@@ -48,7 +48,6 @@ class Veiculo(db.Model):
     cor = db.Column(db.String(30), nullable=False)
     ano = db.Column(db.Integer, nullable=False)
     kilometragem = db.Column(db.Integer, default=0)
-
     # Datas importantes para disponibilidade
     data_ultima_revisao = db.Column(db.Date, nullable=False)
     data_proxima_revisao = db.Column(db.Date, nullable=False)
