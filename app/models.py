@@ -43,7 +43,7 @@ class Veiculo(db.Model):
     tipo_veiculo = db.Column(db.String(10), nullable=False)  # Carro, Moto
     capacidade_pessoas = db.Column(db.Integer, nullable=False)
     valor_diaria = db.Column(db.Numeric(10, 2), nullable=False)
-    imagem_url = db.Column(db.String(255), nullable=True)
+    imagem_url = db.Column(db.String(255), nullable=True, default="default.jpg")
     matricula = db.Column(db.String(10), unique=True, nullable=False)
     cor = db.Column(db.String(30), nullable=False)
     ano = db.Column(db.Integer, nullable=False)

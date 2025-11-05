@@ -62,11 +62,11 @@
             </div>
             <div class="col-lg-6">
                 <div class="banner-content">
-                    <h1 class="title">encontre o seu carro</h1>
+                    <h1 class="title">Encontre o seu carro</h1>
                     <p>Lorem ipsum dolor sit amet, congue placerat nec. Leo faubus sed eleifend bibendum neque
                         vehiculanulla. Lorem ipsum dolor sit amet, congue placerat nec. Leo faubus sed eleifend bibendum
                         neque vehiculanulla.</p>
-                    <a class="cmn-btn" href="#0">ver todos os veículos</a>
+                    <a class="cmn-btn" href="{{ url_for('car_list')}}">ver todos os veículos</a>
                 </div>
             </div>
         </div>
@@ -138,82 +138,28 @@
             </div>
         </div>
         <div class="row mb-none-30">
-            <div class="col-lg-6">
+            {% for veiculo in veiculos %}
+            <div class="col-lg-6"> <!-- car-item start -->
                 <div class="car-item car-item--style2">
-                    <div class="thumb bg_img" data-background="static/images/cars/8.jpg"></div>
+                    <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
                     <div class="car-item-body">
                         <div class="content">
-                            <h4 class="title">forester subar</h4>
-                            <span class="price">a partir de 30€ por dia</span>
-                            <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                            <a class="cmn-btn" href="#0">alugar carro</a>
+                            <h4 class="title">{{veiculo.marca}} {{veiculo.modelo}}</h4>
+                            <span class="price">a partir de <strong>{{ veiculo.valor_diaria }}€ </strong> por dia</span>
+                            <p>{{ veiculo.descricao if veiculo.descricao else 'Veículo disponível para aluguel.' }}</p>
+                            <a class="cmn-btn" href="{{ url_for('reserva', veiculo_id=veiculo.id) }}">alugar carro</a>
                         </div>
                         <div class="car-item-meta">
                             <ul class="details-list">
-                                <li><i class="fa fa-car"></i>model 2014ib</li>
-                                <li><i class="fa fa-tachometer"></i>32000 KM</li>
+                                <li><i class="fa fa-car"></i>{{ veiculo.ano }}</li>
+                                <li><i class="fa fa-tachometer"></i>{{ veiculo.kilometragem }} KM</li>
+                                <li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
                             </ul>
                         </div>
                     </div>
-                </div><!-- car-item end -->
+                </div>
             </div><!-- car-item end -->
-            <div class="col-lg-6">
-                <div class="car-item car-item--style2">
-                    <div class="thumb bg_img" data-background="static/images/cars/v2.jpg"></div>
-                    <div class="car-item-body">
-                        <div class="content">
-                            <h4 class="title">mistubisshi</h4>
-                            <span class="price">a partir de 20$ por dia</span>
-                            <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                            <a class="cmn-btn" href="#0">alugar carro</a>
-                        </div>
-                        <div class="car-item-meta">
-                            <ul class="details-list">
-                                <li><i class="fa fa-car"></i>model 2014ib</li>
-                                <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div><!-- car-item end -->
-            </div><!-- car-item end -->
-            <div class="col-lg-6">
-                <div class="car-item car-item--style2">
-                    <div class="thumb bg_img" data-background="static/images/cars/v3.jpg"></div>
-                    <div class="car-item-body">
-                        <div class="content">
-                            <h4 class="title">mirage range</h4>
-                            <span class="price">a partir de 20$ por dia</span>
-                            <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                            <a class="cmn-btn" href="#0">alugar carro</a>
-                        </div>
-                        <div class="car-item-meta">
-                            <ul class="details-list">
-                                <li><i class="fa fa-car"></i>model 2014ib</li>
-                                <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div><!-- car-item end -->
-            </div><!-- car-item end -->
-            <div class="col-lg-6">
-                <div class="car-item car-item--style2">
-                    <div class="thumb bg_img" data-background="static/images/cars/v4.jpg"></div>
-                    <div class="car-item-body">
-                        <div class="content">
-                            <h4 class="title">pajero range</h4>
-                            <span class="price">a partir de 20$ por dia</span>
-                            <p>Aliquam sollicitudin dolores tristiquvel ornare, vitae aenean.</p>
-                            <a class="cmn-btn" href="#0">alugar carro</a>
-                        </div>
-                        <div class="car-item-meta">
-                            <ul class="details-list">
-                                <li><i class="fa fa-car"></i>model 2014ib</li>
-                                <li><i class="fa fa-tachometer"></i>32000 KM</li>
-                            </ul>
-                        </div>
-                    </div>
-                </div><!-- car-item end -->
-            </div><!-- car-item end -->
+            {% endfor %}
         </div>
     </div>
 </section>

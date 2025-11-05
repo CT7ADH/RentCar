@@ -4,6 +4,8 @@ from datetime import datetime, date
 from app.models import Cliente, Veiculo, Reserva, FormasPagamento
 from functools import wraps
 from sqlalchemy import or_, and_
+from werkzeug.utils import secure_filename
+import os
 
 def login_required(f):
     """Decorator para rotas que requerem login"""
@@ -20,60 +22,70 @@ def login_required(f):
 @app.route("/index")
 def home():
     """Página Inicial"""
-    return render_template("index.html")
+    if request.method == 'POST':
+        pass
+    else:
+        query = Veiculo.query.order_by(Veiculo.valor_diaria.desc())
+        veiculos_todos = query.all()
+        veiculos = veiculos_todos
+
+        return render_template("index.html", veiculos=veiculos)
 
 
-@app.route("/car-list", methods=["GET"])
+@app.route("/car-list", methods=["GET", "POST"])
 def car_list():
     """Listagem de veículos com filtros"""
-    # Buscar todos os veículos ativos
-    query = Veiculo.query.filter_by(ativo=True)
-    
-    # Aplicar filtros se existirem
-    categoria = request.args.get('categoria')
-    transmissao = request.args.get('transmissao')
-    tipo_veiculo = request.args.get('tipo_veiculo')
-    capacidade = request.args.get('capacidade')
-    preco_min = request.args.get('preco_min')
-    preco_max = request.args.get('preco_max')
-    busca = request.args.get('busca')
-    
-    if categoria:
-        query = query.filter_by(categoria=categoria)
-    
-    if transmissao:
-        query = query.filter_by(transmissao=transmissao)
-    
-    if tipo_veiculo:
-        query = query.filter_by(tipo_veiculo=tipo_veiculo)
-    
-    if capacidade:
-        if capacidade == '1-4':
-            query = query.filter(Veiculo.capacidade_pessoas.between(1, 4))
-        elif capacidade == '5-6':
-            query = query.filter(Veiculo.capacidade_pessoas.between(5, 6))
-        elif capacidade == '7+':
-            query = query.filter(Veiculo.capacidade_pessoas >= 7)
-    
-    if preco_min:
-        query = query.filter(Veiculo.valor_diaria >= float(preco_min))
-    
-    if preco_max:
-        query = query.filter(Veiculo.valor_diaria <= float(preco_max))
-    
-    if busca:
-        query = query.filter(
-            or_(
-                Veiculo.marca.ilike(f'%{busca}%'),
-                Veiculo.modelo.ilike(f'%{busca}%')
+    if request.method == 'POST':
+        pass
+    else:
+        # Buscar todos os veículos ativos
+        query = Veiculo.query.filter_by(ativo=True)
+
+        # Aplicar filtros se existirem
+        categoria = request.args.get('categoria')
+        transmissao = request.args.get('transmissao')
+        tipo_veiculo = request.args.get('tipo_veiculo')
+        capacidade = request.args.get('capacidade')
+        preco_min = request.args.get('preco_min')
+        preco_max = request.args.get('preco_max')
+        busca = request.args.get('busca')
+
+        if categoria:
+            query = query.filter_by(categoria=categoria)
+
+        if transmissao:
+            query = query.filter_by(transmissao=transmissao)
+
+        if tipo_veiculo:
+            query = query.filter_by(tipo_veiculo=tipo_veiculo)
+
+        if capacidade:
+            if capacidade == '1-4':
+                query = query.filter(Veiculo.capacidade_pessoas.between(1, 4))
+            elif capacidade == '5-6':
+                query = query.filter(Veiculo.capacidade_pessoas.between(5, 6))
+            elif capacidade == '7+':
+                query = query.filter(Veiculo.capacidade_pessoas >= 7)
+
+        if preco_min:
+            query = query.filter(Veiculo.valor_diaria >= float(preco_min))
+
+        if preco_max:
+            query = query.filter(Veiculo.valor_diaria <= float(preco_max))
+
+        if busca:
+            query = query.filter(
+                or_(
+                    Veiculo.marca.ilike(f'%{busca}%'),
+                    Veiculo.modelo.ilike(f'%{busca}%')
+                )
             )
-        )
-    
-    # Filtrar apenas veículos disponíveis (inspeção e revisão em dia)
-    veiculos_todos = query.all()
-    veiculos = [v for v in veiculos_todos if v.is_disponivel()]
-    
-    return render_template("car-list.html", veiculos=veiculos)
+
+        # Filtrar apenas veículos disponíveis (inspeção e revisão em dia)
+        veiculos_todos = query.all()
+        veiculos = [v for v in veiculos_todos if v.is_disponivel()]
+
+        return render_template("car-list.html", veiculos=veiculos)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -332,7 +344,7 @@ def admin():
             tipo_veiculo = request.form["tipo_veiculo"]
             capacidade_pessoas = request.form["capacidade_pessoas"]
             valor_diaria = request.form["valor_diaria"]
-            imagem_url = request.form.get("imagem_url", "").strip()
+            imagem = request.files.get('imagem')
             matricula = request.form["matricula"].strip()
             cor = request.form["cor"].strip()
             ano = request.form["ano"]
@@ -344,6 +356,7 @@ def admin():
             data_ultima_inspecao = datetime.strptime(request.form["data_ultima_inspecao"], '%Y-%m-%d').date()
 
             # Validações
+
             if not marca or not modelo or not matricula:
                 flash('Marca, Modelo e Matrícula são obrigatórios!', 'danger')
                 return redirect(url_for('admin'))
@@ -352,6 +365,16 @@ def admin():
             if Veiculo.query.filter_by(matricula=matricula.upper()).first():
                 flash('Esta matrícula já está cadastrada!', 'danger')
                 return redirect(url_for('admin'))
+            # Tratar o ficheiro de Imagem
+            if imagem and imagem.filename:
+                filename = secure_filename(imagem.filename) # Gerar nome seguro
+                pasta_destino = os.path.join(app.static_folder, 'images', 'cars')   # Caminho para salvar
+                os.makedirs(pasta_destino, exist_ok=True)   # Criar pasta se não existir
+                caminho_completo = os.path.join(pasta_destino, filename)    # Salvar ficheiro
+                imagem.save(caminho_completo)
+                imagem_url = filename   # Guardar apenas o nome do ficheiro na BD
+            else:
+                imagem_url = None
 
             # Criar novo Veículo
             veiculo = Veiculo(
@@ -362,7 +385,7 @@ def admin():
                 tipo_veiculo=tipo_veiculo,
                 capacidade_pessoas=capacidade_pessoas,
                 valor_diaria=valor_diaria,
-                imagem_url=imagem_url if imagem_url else None,
+                imagem_url=imagem_url,
                 matricula=matricula.upper(),
                 cor=cor.capitalize(),
                 ano=ano,
