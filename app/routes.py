@@ -4,8 +4,8 @@ from datetime import datetime, date
 from app.models import Cliente, Veiculo, Reserva, FormasPagamento
 from functools import wraps
 from sqlalchemy import or_, and_
-from werkzeug.utils import secure_filename
-import os
+from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
+
 
 def login_required(f):
     """Decorator para rotas que requerem login"""
@@ -19,7 +19,7 @@ def login_required(f):
 
 
 @app.route("/")
-@app.route("/index")
+@app.route("/index", methods=["GET", "POST"])
 def home():
     """Página Inicial"""
     if request.method == 'POST':
@@ -334,81 +334,39 @@ def contact():
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     """Administração de veículos"""
+
     if request.method == "POST":
         try:
-            # Receber dados do formulário
-            marca = request.form["marca"].strip()
-            modelo = request.form["modelo"].strip()
-            categoria = request.form["categoria"]
-            transmissao = request.form["transmissao"]
-            tipo_veiculo = request.form["tipo_veiculo"]
-            capacidade_pessoas = request.form["capacidade_pessoas"]
-            valor_diaria = request.form["valor_diaria"]
+            # 1. Extrair dados do formulário
+            dados, erro = extrair_dados_formulario(request.form)
+            if erro:
+                flash(erro, 'danger')
+                return redirect(url_for('admin'))
+
+            # 2. Validar todos os dados
+            valido, mensagem = validar_todos_dados(dados)
+            if not valido:
+                flash(mensagem, 'danger')
+                return redirect(url_for('admin'))
+
+            # 3. Processar imagem
             imagem = request.files.get('imagem')
-            matricula = request.form["matricula"].strip()
-            cor = request.form["cor"].strip()
-            ano = request.form["ano"]
-            kilometragem = request.form.get("kilometragem", 0)
-
-            # Converter datas
-            data_ultima_revisao = datetime.strptime(request.form["data_ultima_revisao"], '%Y-%m-%d').date()
-            data_proxima_revisao = datetime.strptime(request.form["data_proxima_revisao"], '%Y-%m-%d').date()
-            data_ultima_inspecao = datetime.strptime(request.form["data_ultima_inspecao"], '%Y-%m-%d').date()
-
-            # Validações
-
-            if not marca or not modelo or not matricula:
-                flash('Marca, Modelo e Matrícula são obrigatórios!', 'danger')
+            sucesso, filename, mensagem = salvar_imagem(imagem, app.static_folder)
+            if not sucesso:
+                flash(mensagem, 'danger')
                 return redirect(url_for('admin'))
 
-            # Verificar se matrícula já existe
-            if Veiculo.query.filter_by(matricula=matricula.upper()).first():
-                flash('Esta matrícula já está cadastrada!', 'danger')
-                return redirect(url_for('admin'))
-            # Tratar o ficheiro de Imagem
-            if imagem and imagem.filename:
-                filename = secure_filename(imagem.filename) # Gerar nome seguro
-                pasta_destino = os.path.join(app.static_folder, 'images', 'cars')   # Caminho para salvar
-                os.makedirs(pasta_destino, exist_ok=True)   # Criar pasta se não existir
-                caminho_completo = os.path.join(pasta_destino, filename)    # Salvar ficheiro
-                imagem.save(caminho_completo)
-                imagem_url = filename   # Guardar apenas o nome do ficheiro na BD
-            else:
-                imagem_url = None
+            # 4. Criar veículo no banco
+            criar_veiculo_no_banco(dados, filename, db)
 
-            # Criar novo Veículo
-            veiculo = Veiculo(
-                marca=marca.upper(),
-                modelo=modelo.title(),
-                categoria=categoria,
-                transmissao=transmissao,
-                tipo_veiculo=tipo_veiculo,
-                capacidade_pessoas=capacidade_pessoas,
-                valor_diaria=valor_diaria,
-                imagem_url=imagem_url,
-                matricula=matricula.upper(),
-                cor=cor.capitalize(),
-                ano=ano,
-                kilometragem=kilometragem if kilometragem else 0,
-                data_ultima_revisao=data_ultima_revisao,
-                data_proxima_revisao=data_proxima_revisao,
-                data_ultima_inspecao=data_ultima_inspecao,
-            )
-
-            db.session.add(veiculo)
-            db.session.commit()
-
+            # 5. Sucesso!
             flash('Veículo registrado com sucesso!', 'success')
             return redirect(url_for('admin'))
-
-        except ValueError as e:
-            db.session.rollback()
-            flash('Erro nos dados fornecidos. Verifique os campos numéricos e datas.', 'danger')
-            print(f"ERRO ValueError: {e}")
 
         except Exception as e:
             db.session.rollback()
             flash(f'Erro ao registrar veículo: {str(e)}', 'danger')
-            print(f"ERRO Exception: {e}")
+            print(f"ERRO: {e}")
+            return redirect(url_for('admin'))
 
     return render_template("admin.html")

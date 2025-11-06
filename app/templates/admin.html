@@ -1,169 +1,458 @@
-<!DOCTYPE html>
-
 <html lang="pt-pt">
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-
     <title>RentCar-Admin</title>
-    {% with messages = get_flashed_messages() %}
-      {% if messages %}
-        <ul class=flashes>
-        {% for message in messages %}
-          <li>{{ message }}</li>
-        {% endfor %}
-        </ul>
-      {% endif %}
-    {% endwith %}
-    {% block body %}{% endblock %}
-
-    <!-- Flash mensage renderization start
-    {% with messages = get_flashed_messages(with_categories=true) %}
-      {% if messages %}
-        <div class="container mt-1">
-          {% for category, message in messages %}
-            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-              {{ message }}
-              <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-            </div>
-          {% endfor %}
-        </div>
-      {% endif %}
-    {% endwith %}
-    Flash mensage renderization end -->
-    <!-- BootStrap Style -->
-    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-sRIl4kxILFvY47J16cr9ZwB07vP4J8+LH7qKQnuqkuIAvNWLzeN8tE5YBujZqJLB" crossorigin="anonymous">
+    
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+        
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .admin-header h2 {
+            margin: 0;
+            font-weight: 700;
+        }
+        
+        .admin-header p {
+            margin: 10px 0 0 0;
+            opacity: 0.9;
+        }
+        
+        .admin-body {
+            padding: 40px;
+        }
+        
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+        
+        .input-group-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+        
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+        
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+        
+        .input-group .form-control {
+            border-left: none;
+            border-top-left-radius: 0;
+            border-bottom-left-radius: 0;
+        }
+        
+        .input-group-text {
+            border-top-left-radius: 10px;
+            border-bottom-left-radius: 10px;
+        }
+        
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 50px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+        
+        .section-title {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+        
+        .info-badge {
+            background: #f0f4ff;
+            border-left: 4px solid #667eea;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+        
+        .info-badge i {
+            color: #667eea;
+            margin-right: 10px;
+        }
+        
+        .form-text {
+            color: #6c757d;
+            font-size: 0.875rem;
+        }
+        
+        /* Flash Messages */
+        .flashes {
+            list-style: none;
+            padding: 0;
+            margin: 20px 0;
+        }
+        
+        .flashes li {
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            color: #155724;
+            padding: 12px 20px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+        
+        @media (max-width: 768px) {
+            .admin-body {
+                padding: 25px;
+            }
+        }
+    </style>
 </head>
 <body>
-
-<!--  header-section start  -->
-
-<!-- Administrar Veiculos-section start -->
-<section>
-<div class="container mt-5 bg-secondary text-bg-secondary">
-    <h3 class="title">Administrar Veiculos </h3>
-    <form action="{{ url_for('admin') }}" method="post" enctype="multipart/form-data">
-        <div class="row mt-3">
-            <div class="col">
-                <label for="marca">Marca:</label>
-                <input class="form-control" id="marca" name="marca" placeholder="Marca" type="text" size="50" required/>
+    <div class="container">
+        {% with messages = get_flashed_messages() %}
+          {% if messages %}
+            <div class="row justify-content-center mb-3">
+                <div class="col-lg-10 col-xl-9">
+                    <ul class="flashes">
+                    {% for message in messages %}
+                      <li><i class="fas fa-check-circle me-2"></i>{{ message }}</li>
+                    {% endfor %}
+                    </ul>
+                </div>
             </div>
-            <div class="col">
-                <label for="modelo">Modelo:</label>
-                <input class="form-control" id="modelo" name="modelo" placeholder="Modelo" type="text" size="50" required/>
-            </div>
-            <div class="col">
-                <label for="categoria" class="form-label">Categoria do Veículo:</label>
-                <select class="form-select" id="categoria" name="categoria" required>
-                    <option value="" selected disabled>Selecione a Categoria</option>
-                    <option value="Pequeno">Pequeno</option>
-                    <option value="Médio">Médio</option>
-                    <option value="Grande">Grande</option>
-                    <option value="SUV">SUV</option>
-                    <option value="Luxo">Luxo</option>
-                </select>
+          {% endif %}
+        {% endwith %}
+        
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="admin-card">
+                    <!-- Header -->
+                    <div class="admin-header">
+                        <h2><i class="fas fa-car-side me-2"></i>Administrar Veículos</h2>
+                        <p>Adicione novos veículos à frota</p>
+                    </div>
+                    
+                    <!-- Body -->
+                    <div class="admin-body">
+                        {% block body %}
+                        <form action="{{ url_for('admin') }}" method="post" enctype="multipart/form-data" id="adminForm">
+                            
+                            <!-- Informações Básicas -->
+                            <h4 class="section-title"><i class="fas fa-info-circle me-2"></i>Informações Básicas</h4>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="marca" class="form-label">Marca *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-copyright"></i></span>
+                                        <input class="form-control" id="marca" name="marca" 
+                                               placeholder="Ex: Toyota, BMW, Mercedes" type="text" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="modelo" class="form-label">Modelo *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                        <input class="form-control" id="modelo" name="modelo" 
+                                               placeholder="Ex: Corolla, X5, Classe A" type="text" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="categoria" class="form-label">Categoria *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-layer-group"></i></span>
+                                        <select class="form-select" id="categoria" name="categoria" required>
+                                            <option value="" selected disabled>Selecione a Categoria</option>
+                                            <option value="Pequeno">Pequeno</option>
+                                            <option value="Médio">Médio</option>
+                                            <option value="Grande">Grande</option>
+                                            <option value="SUV">SUV</option>
+                                            <option value="Luxo">Luxo</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="transmissao" class="form-label">Transmissão *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-cog"></i></span>
+                                        <select class="form-select" id="transmissao" name="transmissao" required>
+                                            <option value="" selected disabled>Tipo de transmissão</option>
+                                            <option value="Automatico">Automático</option>
+                                            <option value="Manual">Manual</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="tipo_veiculo" class="form-label">Tipo de Veículo *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-road"></i></span>
+                                        <select class="form-select" id="tipo_veiculo" name="tipo_veiculo" required>
+                                            <option value="" selected disabled>Selecione o Tipo</option>
+                                            <option value="Carro">Carro</option>
+                                            <option value="Mota">Mota</option>
+                                        </select>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="capacidade_pessoas" class="form-label">Capacidade/Lotação *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-users"></i></span>
+                                        <input class="form-control" type="number" name="capacidade_pessoas" 
+                                               id="capacidade_pessoas" placeholder="Nº de pessoas" 
+                                               min="1" max="9" required>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <!-- Identificação e Valor -->
+                            <h4 class="section-title"><i class="fas fa-id-card me-2"></i>Identificação e Preço</h4>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="matricula" class="form-label">Matrícula *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-hashtag"></i></span>
+                                        <input class="form-control" type="text" name="matricula" id="matricula" 
+                                               placeholder="XX-XX-XX" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="cor" class="form-label">Cor *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-palette"></i></span>
+                                        <input class="form-control" type="text" name="cor" id="cor" 
+                                               placeholder="Ex: Preto, Branco, Azul" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="ano" class="form-label">Ano *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar"></i></span>
+                                        <input class="form-control" type="number" name="ano" id="ano" 
+                                               step="1" min="1990" max="2030" placeholder="2024" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="valor_diaria" class="form-label">Preço por Dia (€) *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-euro-sign"></i></span>
+                                        <input class="form-control" type="number" name="valor_diaria" 
+                                               id="valor_diaria" step="0.01" min="0" 
+                                               placeholder="45.00" required>
+                                    </div>
+                                    <div class="form-text">Exemplo: 45.00€ por dia</div>
+                                </div>
+                                
+                                <div class="col-md-6 mb-3">
+                                    <label for="kilometragem" class="form-label">Quilometragem</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-tachometer-alt"></i></span>
+                                        <input class="form-control" type="number" name="kilometragem" 
+                                               id="kilometragem" step="1" min="0" placeholder="50000"/>
+                                    </div>
+                                    <div class="form-text">Em quilómetros (km)</div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <!-- Manutenção -->
+                            <h4 class="section-title"><i class="fas fa-tools me-2"></i>Manutenção e Inspeção</h4>
+                            
+                            <div class="info-badge">
+                                <i class="fas fa-info-circle"></i>
+                                <strong>Informação:</strong> Mantenha as datas de revisão e inspeção atualizadas
+                            </div>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_ultima_revisao" class="form-label">Última Revisão *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-wrench"></i></span>
+                                        <input class="form-control" type="date" name="data_ultima_revisao" 
+                                               id="data_ultima_revisao" min="2020-01-01" max="2099-12-31" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_proxima_revisao" class="form-label">Próxima Revisão *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-calendar-check"></i></span>
+                                        <input class="form-control" type="date" name="data_proxima_revisao" 
+                                               id="data_proxima_revisao" min="2020-01-01" max="2099-12-31" required/>
+                                    </div>
+                                </div>
+                                
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_ultima_inspecao" class="form-label">Última Inspeção *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-clipboard-check"></i></span>
+                                        <input class="form-control" type="date" name="data_ultima_inspecao" 
+                                               id="data_ultima_inspecao" min="2020-01-01" max="2099-12-31" required/>
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <hr class="my-4">
+                            
+                            <!-- Upload Imagem -->
+                            <h4 class="section-title"><i class="fas fa-image me-2"></i>Imagem do Veículo</h4>
+                            
+                            <div class="row mb-3">
+                                <div class="col-md-12 mb-3">
+                                    <label for="imagem" class="form-label">Carregar Imagem</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-upload"></i></span>
+                                        <input class="form-control" type="file" name="imagem" 
+                                               id="imagem" accept="image/*">
+                                    </div>
+                                    <div class="form-text">
+                                        <i class="fas fa-info-circle text-primary"></i> 
+                                        Formatos aceites: JPG, PNG, GIF (máx. 5MB)
+                                    </div>
+                                </div>
+                            </div>
+                            
+                            <!-- Botão Submit -->
+                            <div class="d-flex justify-content-center mt-4">
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-plus-circle me-2"></i>Adicionar Veículo
+                                </button>
+                            </div>
+                            
+                        </form>
+                        {% endblock %}
+                    </div>
+                </div>
             </div>
         </div>
-        <div class="row mt-3">
-            <div class="col">
-                <label for="transmissao" class="form-label">Tipo de Transmissão:</label>
-                <select class="form-select" id="transmissao" name="transmissao" required>
-                    <option value="" selected disabled>Selecione o tipo de transmissão</option>
-                    <option value="Automatico">Automático</option>
-                    <option value="Manual">Manual</option>
-                </select>
-            </div>
-            <div class="col">
-                <label for="tipo_veiculo" class="form-label">Tipo de Veículo:</label>
-                <select class="form-select" id="tipo_veiculo" name="tipo_veiculo" required>
-                    <option value="" selected disabled>Selecione o Tipo de Veículo</option>
-                    <option value="Carro">Carro</option>
-                    <option value="Mota">Mota</option>
-                </select>
-            </div>
-            <div class="col">
-                <label for="capacidade_pessoas" class="form-label">Capacidade/Lotação:</label>
-                <input class="form-control"
-                       type="number"
-                       name="capacidade_pessoas"
-                       id="capacidade_pessoas"
-                       placeholder="Capacidade de Pessoas"
-                       min="1"
-                       max="9"
-                       required>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col-2">
-                <label for="valor_diaria" class="form-label">Preço por dia:</label>
-                <input class="form-control"
-                       type="number"
-                       name="valor_diaria"
-                       id="valor_diaria"
-                       step="0.01"
-                       min="0"
-                       placeholder="Valor da Diária 12.34€"
-                       required>
-            </div>
-            <div class="col-6">
-                <label for="imagem" class="form-label">Imagem do carro:</label>
-                <input class="form-control"
-                       type="file"
-                       name="imagem"
-                       id="imagem"
-                       accept="image/*">
-                <div class="form-text">Formatos aceites: JPG, PNG, GIF (máx. 5MB)</div>
-            </div>
-            <div class="col-4">
-                <label for="matricula">Matricula:</label>
-                <input class="form-control" type="text" name="matricula" id="matricula" size="10" placeholder="Matricula do Veiculo" required/>
+    </div>
 
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="col">
-
-                <input class="form-control" type="text" name="cor" id="cor" size="30" placeholder="Cor do Veiculo" required/>
-            </div>
-            <div class="col">
-
-                <input class="form-control" type="number" name="ano" id="ano" step="1" min="0" placeholder="Ano do Veiculo" required/>
-            </div>
-            <div class="col">
-
-                <input class="form-control" type="number" name="kilometragem" id="kilometragem" step="1" min="1" placeholder="Kilometragem"/>
-            </div>
-        </div>
-         <div class="row mt-3">
-            <div class="col">
-                <label for="data_ultima_revisao">Data Ultima Revisão:</label>
-                <input class="form-control" type="date" name="data_ultima_revisao" id="data_ultima_revisao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
-            </div>
-            <div class="col">
-                <label for="data_proxima_revisao">Data Proxima Revisão:</label>
-                <input class="form-control" type="date" name="data_proxima_revisao" id="data_proxima_revisao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
-            </div>
-            <div class="col">
-                <label for="data_ultima_inspecao">Data Ultima Inspeção:</label>
-                <input class="form-control" type="date" name="data_ultima_inspecao" id="data_ultima_inspecao" min="2020-01-01" max="2099-12-31" autocomplete="bday" required/>
-            </div>
-        </div>
-        <div class="row mt-3">
-            <div class="mx-auto" style="width:200px">
-                <button class="btn btn-primary" type="submit" >Adicionar Veiculo</button>
-
-            </div>
-        </div>
-    </form>
-</div>
-
-</section>
-<!-- Administrar Veiculos-section end -->
-<!-- footer-section start -->       <!-- footer-section end -->
-<!-- BootStrap script -->
-<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js" integrity="sha384-FKyoEForCGlyvwx9Hj09JcYn3nv7wiPVlz7YYwJrWVcXK/BmnVDxM+D2scQbITxI" crossorigin="anonymous"></script>
-
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        // Definir data máxima como hoje para as datas de revisão/inspeção
+        const hoje = new Date().toISOString().split('T')[0];
+        document.getElementById('data_ultima_revisao').max = hoje;
+        document.getElementById('data_ultima_inspecao').max = hoje;
+        
+        // Data mínima para próxima revisão é hoje
+        document.getElementById('data_proxima_revisao').min = hoje;
+        
+        // Atualizar sugestão de próxima revisão baseada na última
+        document.getElementById('data_ultima_revisao').addEventListener('change', function() {
+            const dataUltima = new Date(this.value);
+            const dataProxima = new Date(dataUltima);
+            dataProxima.setMonth(dataProxima.getMonth() + 6); // 6 meses depois
+            
+            const dataProximaFormatada = dataProxima.toISOString().split('T')[0];
+            document.getElementById('data_proxima_revisao').value = dataProximaFormatada;
+        });
+        
+        // Formatar matrícula automaticamente (XX-XX-XX)
+        document.getElementById('matricula').addEventListener('input', function(e) {
+            let value = e.target.value.replace(/[^a-zA-Z0-9]/g, '').toUpperCase();
+            
+            if (value.length > 2) {
+                value = value.slice(0, 2) + '-' + value.slice(2);
+            }
+            if (value.length > 5) {
+                value = value.slice(0, 5) + '-' + value.slice(5, 7);
+            }
+            
+            e.target.value = value;
+        });
+        
+        // Validação do ano (não pode ser futuro)
+        document.getElementById('ano').addEventListener('change', function() {
+            const anoAtual = new Date().getFullYear();
+            if (parseInt(this.value) > anoAtual + 1) {
+                alert('O ano não pode ser superior a ' + (anoAtual + 1));
+                this.value = anoAtual;
+            }
+        });
+        
+        // Preview da imagem
+        document.getElementById('imagem').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                // Verificar tamanho (5MB = 5242880 bytes)
+                if (file.size > 5242880) {
+                    alert('A imagem é muito grande! Máximo 5MB.');
+                    this.value = '';
+                    return;
+                }
+                
+                // Verificar tipo
+                const validTypes = ['image/jpeg', 'image/jpg', 'image/png', 'image/gif'];
+                if (!validTypes.includes(file.type)) {
+                    alert('Formato de imagem inválido! Use JPG, PNG ou GIF.');
+                    this.value = '';
+                    return;
+                }
+            }
+        });
+        
+        // Validação do formulário antes de submeter
+        document.getElementById('adminForm').addEventListener('submit', function(e) {
+            const dataProxima = new Date(document.getElementById('data_proxima_revisao').value);
+            const dataUltima = new Date(document.getElementById('data_ultima_revisao').value);
+            
+            if (dataProxima <= dataUltima) {
+                e.preventDefault();
+                alert('A data da próxima revisão deve ser posterior à última revisão!');
+                return false;
+            }
+        });
+    </script>
 </body>
 </html>
-
-
