@@ -33,8 +33,19 @@ Critérios Técnicos:
     proxima revisão seja inferior do que a actual;
 
 --------------------------------------------------------------
-# #############################################################
+### commands:  
+* criar/atualizar o requirements.txt
+
+        pip freeze > requirements.txt
+
+* Instala as dependências do requirements.txt
+
+        pip install -r requirements.txt
+
 --------------------------------------------------------------
+
+
+
 Proposta B:
 Desenvolver uma aplicação para gerir a frota de veículos da empresa e executar as seguintes funcionalidades:
 1.  Manter (registar, alterar, listar, remover) os veículos, clientes, reservas e formas de pagamento.
@@ -59,14 +70,4 @@ Critérios Técnicos:
 3.  O sistema deve alertar ao gestor que os veículos precisarão de revisão 5 dias antes da data da proxima revisão.
 4.  O gestor da frota deve ter a opção de indicar que o veículo está em manutenção e o mesmo ficará indisponivel para alugar;
 
-
-***
-### commands:  
-* criar/atualizar o requirements.txt
-
-        pip freeze > requirements.txt
-
-* Instala as dependências do requirements.txt
-* 
-        pip install -r requirements.txt
 
