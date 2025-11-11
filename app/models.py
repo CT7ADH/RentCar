@@ -1,16 +1,36 @@
 from datetime import datetime, date, timedelta
-
+from app import db, bcrypt
 from flask_migrate import check
 
-from app import db, bcrypt
+''' -------------------------------------------------------------------------------------------------- '''
+"""
+1.> Uma vez criadas todas as tabelas da base de dados temos que rodar o comando:
+        flask db init
+este comando só se roda uma vez para iniciar a cnfiguração do 'migrate'.
 
-"""
-uma vez comfiguradas todas as tabelas para criar a base de dados temos que rodar o comando "flask db init", 
-só se roda este comando uma vez por projecto.
-- fazer o migrate despois de qualquer alteração: 'flask db migrate -m "[mensagem migrate]"
-- salvar o commit no banco de Dados: flask db upgrade
-"""
-''' Classe Cliente para registo dos clientes'''
+2.> Para fazer o migrate despois de qualquer alteração: 
+        flask db migrate -m "[mensagem migrate]"
+        
+3.> Para salvar o commit no banco de Dados:
+        flask db upgrade
+        
+----------------------------------------------------------------------------------------- """
+
+''' Classe FormasPagamento para inserir as forma de pagamento'''
+class FormasPagamento(db.Model):        # MB, MBway, CCredito,
+    __tablename__ = 'formas_pagamento'
+
+    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    nome = db.Column(db.String(50), nullable=False, unique=True)
+    ativo = db.Column(db.Boolean, default=True)
+
+    # Relacionamentos
+    reservas = db.relationship('Reserva', backref='formas_pagamento', lazy='dynamic')
+
+    def __repr__(self):
+        return self.nome
+
+''' Classe Cliente para registar os clientes'''
 class Cliente(db.Model):
     __tablename__ = 'clientes'
 
@@ -31,7 +51,7 @@ class Cliente(db.Model):
     def check_password(self, password):
         return bcrypt.check_password_hash(self.pass_hash, password)
 
-''' Classe Veiculo para registo dos Veiculos da empresa'''
+''' Classe Veiculo para registar os Veiculos e seus dados'''
 class Veiculo(db.Model):
     __tablename__ = 'veiculos'
 
@@ -59,50 +79,9 @@ class Veiculo(db.Model):
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='veiculo', lazy=True)
 
-    def is_disponivel(self, data_inicio=None, data_fim=None):
-        """Verifica se o veículo está disponível"""
-        if not self.ativo:
-            return False
-
-        # Verifica se a inspeção está em dia (não pode ser superior a 1 ano)
-        data_limite_inspecao = self.data_ultima_inspecao + timedelta(days=365)
-        if date.today() > data_limite_inspecao:
-            return False
-
-        # Verifica se não passou da data da próxima revisão
-        if date.today() > self.data_proxima_revisao:
-            return False
-
-        # Se data_inicio e data_fim foram fornecidas, verifica conflitos de reserva
-        if data_inicio and data_fim:
-            reservas_conflitantes = Reserva.query.filter(
-                Reserva.veiculo_id == self.id,
-                Reserva.status.in_(['confirmada', 'ativa']),
-                db.or_(
-                    db.and_(Reserva.data_inicio <= data_inicio, Reserva.data_fim > data_inicio),
-                    db.and_(Reserva.data_inicio < data_fim, Reserva.data_fim >= data_fim),
-                    db.and_(Reserva.data_inicio >= data_inicio, Reserva.data_fim <= data_fim)
-                )
-            ).first()
-
-            if reservas_conflitantes:
-                return False
-
-        return True
 
 
-''' Classe FormasPagamento onde se regista as forma de pagamento'''
-class FormasPagamento(db.Model):        # MB, MBway, CCredito,
-    __tablename__ = 'formas_pagamento'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nome = db.Column(db.String(50), nullable=False, unique=True)
-    ativo = db.Column(db.Boolean, default=True)
-
-    # Relacionamentos
-    reservas = db.relationship('Reserva', backref='formas_pagamento', lazy='dynamic')
-
-''' Classe Reserva para registo dos Veiculos da empresa'''
+''' Classe Reserva para registar as Reservas'''
 class Reserva(db.Model):
     __tablename__ = 'reservas'
 

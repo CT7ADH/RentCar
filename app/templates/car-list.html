@@ -31,7 +31,7 @@
                                         <span class="caption">Ordenar por : </span>
                                         <select name="ordenar" id="ordenar">
                                             <option value="">Todos os Veículos</option>
-                                            {% for veiculo in veiculos %}
+                                            {% for veiculo in context %}
                                             <option value="{{ veiculo.id }}">{{ veiculo.marca }} {{ veiculo.modelo }}</option>
                                             {% endfor %}
                                         </select>
@@ -55,7 +55,7 @@
         <div class="row mt-70">
             <div class="col-lg-8">
                 <div class="car-search-result-area grid--view row mb-none-30">
-                    {% for veiculo in veiculos %}
+                    {% for veiculo in context %}
                     <div class="col-md-6 col-12">
                         <div class="car-item">
                             <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
@@ -98,7 +98,7 @@
                                     <div class="col-lg-12 form-group">
                                         <select name="veiculo_id" required>
                                             <option value="">Escolha o Tipo de Carro</option>
-                                            {% for veiculo in veiculos %}
+                                            {% for veiculo in context %}
                                             <option value="{{ veiculo.id }}">{{ veiculo.categoria }}</option>
                                             {% endfor %}
                                         </select>

@@ -1,11 +1,13 @@
 from app import app, db
 from flask import render_template, url_for, request, redirect, flash, session
 from datetime import datetime, date
-from app.models import Cliente, Veiculo, Reserva, FormasPagamento
+from app.models import Cliente, Veiculo, Reserva, FormasPagamento # Esta linha tem que ser apagada, quando se finalizar o controler
+from app.controler import FormasPagamentoControler, ClienteControler, VeiculoControler, ReservaControler
 from functools import wraps
 from sqlalchemy import or_, and_
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
+''' -------------------------------------------------------------------------------------------------- '''
 
 def login_required(f):
     """Decorator para rotas que requerem login"""
@@ -25,11 +27,8 @@ def home():
     if request.method == 'POST':
         pass
     else:
-        query = Veiculo.query.order_by(Veiculo.valor_diaria.desc())
-        veiculos_todos = query.all()
-        veiculos = veiculos_todos
-
-        return render_template("index.html", veiculos=veiculos)
+        context = VeiculoControler().get_all_veiculos()
+        return render_template("index.html", context=context)
 
 
 @app.route("/car-list", methods=["GET", "POST"])
@@ -38,6 +37,7 @@ def car_list():
     if request.method == 'POST':
         pass
     else:
+        '''
         # Buscar todos os veículos ativos
         query = Veiculo.query.filter_by(ativo=True)
 
@@ -80,12 +80,11 @@ def car_list():
                     Veiculo.modelo.ilike(f'%{busca}%')
                 )
             )
-
+        '''
         # Filtrar apenas veículos disponíveis (inspeção e revisão em dia)
-        veiculos_todos = query.all()
-        veiculos = [v for v in veiculos_todos if v.is_disponivel()]
 
-        return render_template("car-list.html", veiculos=veiculos)
+        context = VeiculoControler().get_all_veiculos()
+        return render_template("car-list.html", context=context)
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -160,10 +159,15 @@ def registration():
     
     return render_template("registration.html")
 
+@app.route("/reserva")
+def reserva():
 
-@app.route("/reserva", methods=["GET", "POST"])
+    return render_template("reserva.html", data={'status': 200, 'msg': None, 'type': None})
+
+# Talvez se tenha que apagar
+@app.route("/reserva/<veiculo_id>", methods=["GET", "POST"])
 @login_required
-def reserva(veiculo_id):
+def reserva_id(veiculo_id):
     """Criar nova reserva"""
     veiculo = Veiculo.query.get_or_404(veiculo_id)
     formas_pagamento = FormasPagamento.query.filter_by(ativo=True).all()
@@ -217,7 +221,7 @@ def reserva(veiculo_id):
     
     return render_template("reserva.html", veiculo=veiculo, formas_pagamento=formas_pagamento, today=hoje)
 
-
+'''
 @app.route("/minhas-reservas")
 @login_required
 def minhas_reservas():
@@ -323,7 +327,7 @@ def cancelar_reserva(reserva_id):
         flash(f'Erro ao cancelar reserva: {str(e)}', 'danger')
     
     return redirect(url_for('minhas_reservas'))
-
+'''
 
 @app.route("/contact")
 def contact():

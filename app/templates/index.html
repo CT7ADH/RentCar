@@ -138,7 +138,7 @@
             </div>
         </div>
         <div class="row mb-none-30">
-            {% for veiculo in veiculos %}
+            {% for veiculo in context %}
             <div class="col-lg-6"> <!-- car-item start -->
                 <div class="car-item car-item--style2">
                     <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
