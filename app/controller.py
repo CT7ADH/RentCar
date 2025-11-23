@@ -2,8 +2,6 @@
 from datetime import date, timedelta
 from app import db
 from flask_login import login_user, logout_user
-from prompt_toolkit.validation import ValidationError
-from sqlalchemy import func
 
 from app.models import Cliente, Veiculo, PayMethod, Reserva
 ''' -------------------------------------------------------------------------------------------------- '''
@@ -24,7 +22,6 @@ class PayMethodControler():
             db.session.close()
 
 
-
 ''' -------------------------------------------------------------------------------------------------- '''
 class ClienteControler():
     def __init__(self):
@@ -40,26 +37,44 @@ class VeiculoControler():
     def __init__(self):
         self.veiculo_model = Veiculo()
 
-    @classmethod
-    def get_all_veiculos(cls):
+    def get_veiculos(self, limit):
+        result = []
         try:
-            res = db.session.query(Veiculo).all()
+            res = self.veiculo_model.get_all(limit=limit)
+
+            for r in res:
+                result.append({
+                    'id': r.id,
+                    'marca': r.marca,
+                    'modelo': r.modelo,
+                    'categoria': r.categoria,
+                    'transmissao':r.transmissao,
+                    'tipo_veiculo': r.tipo_veiculo,
+                    'capacidade_pessoas': r.capacidade_pessoas,
+                    'valor_diaria' : r.valor_diaria,
+                    'imagem_url' : r.imagem_url,
+                    'cor' : r.cor,
+                    'ano' : r.ano,
+                    'kilometragem': r.kilometragem,
+                    'ativo' : r.ativo
+
+                })
+
         except Exception as e:
-            res = []
             print(e)
+            result = []
         finally:
-            db.session.close()
-            return res
+            return result
 
     def get_used_categorias(self):
+        """Retorna categorias únicas de veículos ativos"""
         try:
-            res = db.session.query.get(Veiculo.categoria)
+            result = Veiculo.get_categorias_ativas()
         except Exception as e:
-            res = []
-            print(e)
+            print(f"Erro ao buscar categorias: {e}")
+            result = []
         finally:
-            db.session.close()
-            return res
+            return result
 
     def is_disponivel(self, data_inicio=None, data_fim=None):
         """Verifica se o veículo está disponível"""
@@ -99,6 +114,7 @@ class ReservaControler():
         self.reserva_model = Reserva()
 
 
+''' -------------------------------------------------------------------------------------------------- '''
 class AuthController:
 
     @staticmethod

@@ -32,6 +32,8 @@ class PayMethod(db.Model):        # MB, MBway, CCredito,
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='formas_pagamento', lazy='dynamic')
 
+    def __repr__(self):
+        return self.nome
 
     def to_dict(self):
         if self.ativo == True:
@@ -40,8 +42,7 @@ class PayMethod(db.Model):        # MB, MBway, CCredito,
                 "name": self.nome
             }
 
-    def __repr__(self):
-        return self.nome
+
 
 
 ''' Classe Cliente para registar os clientes'''
@@ -98,20 +99,20 @@ class Veiculo(db.Model):
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='veiculo', lazy=True)
 
-    # Crias o Dicionario com as categorias
-    def to_dict(self):
-        if self.ativo == True:
-            return {
-                "id": self.id,
-                "categoria": self.categoria
-            }
+    # # Crias o Dicionario com as categorias
+    # def to_dict(self):
+    #     if self.ativo == True:
+    #         return {
+    #             "id": self.id,
+    #             "categoria": self.categoria
+    #         }
 
     def get_all(self, limit):
         try:
             if limit is None:
                 res = db.session.query(Veiculo).all()
             else:
-                res = db.session.query(Veiculo).order_by(Veiculo.date_created).limit(limit).all()
+                res = db.session.query(Veiculo).order_by(Veiculo.data_cadastro).limit(limit).all()
         except Exception as e:
             res = []
             print(e)
@@ -128,6 +129,20 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
             return res
+
+    # Metodo: Buscar categorias únicas de veículos ativos
+    @staticmethod
+    def get_categorias_ativas():
+        """Retorna lista de categorias únicas de veículos ativos"""
+        try:
+            categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.categoria).all()
+            # Converte lista de tuplas em lista simples
+            return [cat[0] for cat in categorias]
+        except Exception as e:
+            print(f"Erro ao buscar categorias: {e}")
+            return []
+        finally:
+            db.session.close()
 
 
 

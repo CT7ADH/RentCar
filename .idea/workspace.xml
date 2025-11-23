@@ -4,26 +4,13 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="controler introduce">
-      <change afterPath="$PROJECT_DIR$/tests/check_fun.py" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/tests/create_secret.py" afterDir="false" />
+    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="controler develop">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/__init__.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/__init__.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/car_admin.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/car_admin.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/controler.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/models.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/models.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/static/images/testemunho/1.jpg" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/car-list.html" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/contact.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/contact.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/login.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/login.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/minhas_reservas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/minhas_reservas.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/registration.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/registration.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/reserva.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/reserva.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/index.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/index.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/database.db" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/main.py" beforeDir="false" afterPath="$PROJECT_DIR$/main.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/tests/admin_veiculos.py" beforeDir="false" afterPath="$PROJECT_DIR$/tests/admin_veiculos.py" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -290,7 +277,15 @@
       <option name="project" value="LOCAL" />
       <updated>1762895286991</updated>
     </task>
-    <option name="localTasksCounter" value="18" />
+    <task id="LOCAL-00018" summary="controler develop">
+      <option name="closed" value="true" />
+      <created>1763924892027</created>
+      <option name="number" value="00018" />
+      <option name="presentableId" value="LOCAL-00018" />
+      <option name="project" value="LOCAL" />
+      <updated>1763924892027</updated>
+    </task>
+    <option name="localTasksCounter" value="19" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -318,7 +313,8 @@
     <MESSAGE value="admin.html recebe imagems" />
     <MESSAGE value="admin.html increment" />
     <MESSAGE value="controler introduce" />
-    <option name="LAST_COMMIT_MESSAGE" value="controler introduce" />
+    <MESSAGE value="controler develop" />
+    <option name="LAST_COMMIT_MESSAGE" value="controler develop" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/RentCar$routes.coverage" NAME="routes Coverage Results" MODIFIED="1761987851126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />
