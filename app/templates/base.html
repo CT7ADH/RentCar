@@ -30,13 +30,12 @@
     <link href="static/css/main.css" rel="stylesheet"/>
 </head>
 <body>
-
 <!--  header-section start  -->
 <header class="header-section header-section--style2">
     <div class="header-bottom">
         <div class="container">
             <nav class="navbar navbar-expand-lg p-0">
-                <a class="site-logo site-title" href="{{ url_for('home')}}"><img alt="site-logo"
+                <a class="site-logo site-title" href="{{ url_for('root')}}"><img alt="site-logo"
                                                                        src="static/images/logo2.png"/><span
                         class="logo-icon"><i class="flaticon-fire"></i></span></a>
                 <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
@@ -46,7 +45,7 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav main-menu m-auto">
-                        <li class=""><a href="{{ url_for('home')}}">Início</a></li>
+                        <li class=""><a href="{{ url_for('root')}}">Início</a></li>
                         <li class=""><a href="{{ url_for('car_list')}}">Carros</a></li>
                         <li><a href="{{ url_for('login')}}">Iniciar sessão</a></li>
                         <li><a href="{{ url_for('registration')}}">Registar-se</a></li>
@@ -70,7 +69,7 @@
                 <div class="col-lg-4 col-sm-8">
                     <div class="footer-widget widget-about">
                         <div class="widget-about-content">
-                            <a class="footer-logo" href="{{ url_for('home')}}"><img alt="logo"
+                            <a class="footer-logo" href="{{ url_for('root')}}"><img alt="logo"
                                                                           src="static/images/logo-footer.png"/></a>
                             <p>Lorem ipsum dolor sit amet, congue placeranec. Leo faucibus sed eleifend bibendum n
                                 vehicula nulla mauris nulla ipsum neque sed. Gravida egestas fermentum urna, velit

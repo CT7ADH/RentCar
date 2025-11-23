@@ -1,39 +1,34 @@
+# -*- coding: utf-8 -*-
 from app import app, db
 from flask import render_template, url_for, request, redirect, flash, session
 from datetime import datetime, date
-from app.models import Cliente, Veiculo, Reserva, FormasPagamento # Esta linha tem que ser apagada, quando se finalizar o controler
-from app.controler import FormasPagamentoControler, ClienteControler, VeiculoControler, ReservaControler
+from app.models import Cliente, Veiculo, Reserva, PayMethod # Esta linha tem que ser apagada, quando se finalizar o controler
+from app.controller import PayMethodControler, ClienteControler, VeiculoControler, ReservaControler, AuthController
+from flask_login import login_user, logout_user, login_required, current_user
 from functools import wraps
 from sqlalchemy import or_, and_
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
 ''' -------------------------------------------------------------------------------------------------- '''
 
-def login_required(f):
-    """Decorator para rotas que requerem login"""
-    @wraps(f)
-    def decorated_function(*args, **kwargs):
-        if 'user_id' not in session:
-            flash('Você precisa estar logado para acessar esta página.', 'warning')
-            return redirect(url_for('login'))
-        return f(*args, **kwargs)
-    return decorated_function
-
-
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
-def home():
-    """Página Inicial"""
+def root():
+    """ Página Inicial """
+    if current_user.is_authenticated:
+        return redirect(url_for('root'))
+
     if request.method == 'POST':
         pass
     else:
+
         context = VeiculoControler().get_all_veiculos()
         return render_template("index.html", context=context)
 
 
-@app.route("/car-list", methods=["GET", "POST"])
+@app.route("/car_list", methods=["GET", "POST"])
 def car_list():
-    """Listagem de veículos com filtros"""
+    """ Listagem de veículos com filtros """
     if request.method == 'POST':
         pass
     else:
@@ -84,80 +79,71 @@ def car_list():
         # Filtrar apenas veículos disponíveis (inspeção e revisão em dia)
 
         context = VeiculoControler().get_all_veiculos()
-        return render_template("car-list.html", context=context)
+        return render_template("car_list.html", context=context)
 
 
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """Login de clientes"""
+    """ Rota de login """
+    if current_user.is_authenticated:
+        return redirect(url_for('login'))
+
     if request.method == 'POST':
-        email = request.form['email']
-        senha = request.form['password']
+        email = request.form.get('email')
+        password = request.form.get('password')
 
-        cliente = Cliente.query.filter_by(email=email).first()
+        sucesso, mensagem, usuario = AuthController.autenticar_usuario(email=email.lower(), password=password)
 
-        if cliente and cliente.check_password(senha):
-            session['user_id'] = cliente.id
-            session['user_name'] = cliente.name
-            flash(f'Bem-vindo, {cliente.name}!', 'success')
-
-            # Redirecionar para a página solicitada ou home
-            next_page = request.args.get('next')
-            return redirect(next_page) if next_page else redirect(url_for('home'))
+        if sucesso:
+            flash(mensagem, 'success')
+            return redirect(url_for('car_list'))
         else:
-            flash('Email ou senha inválidos.', 'danger')
+            flash(mensagem, 'danger')
 
     return render_template('login.html')
 
 
 @app.route("/logout")
+@login_required
 def logout():
-    """Logout do cliente"""
-    session.clear()
-    flash('Você saiu da sua conta.', 'info')
-    return redirect(url_for('home'))
+    """Rota de logout"""
+    sucesso, mensagem = AuthController.fazer_logout()
+    flash(mensagem, 'info')
+    return redirect(url_for('login'))
 
 
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
-    """Registro de novos clientes"""
+    """ Registro de novos clientes """
+    if current_user.is_authenticated:
+        return redirect(url_for('registration'))
+
     if request.method == "POST":
-        try:
-            name = request.form["name"]
-            email = request.form["email"]
-            phone = request.form["phone"]
-            birth_date = datetime.strptime(request.form["birth_date"], '%Y-%m-%d').date()
-            password = request.form["password"]
-            re_pass = request.form["re_pass"]
 
-            # Validações
-            if password != re_pass:
-                flash("Passwords não coincidem!", 'danger')
-                return redirect(url_for('registration'))
+        name = request.form["name"]
+        email = request.form["email"]
+        phone = request.form["phone"]
+        birth_date = datetime.strptime(request.form["birth_date"], '%Y-%m-%d').date()
+        password = request.form["password"]
+        re_pass = request.form["re_pass"]
 
-            if Cliente.query.filter_by(email=email).first():
-                flash('Este email já está cadastrado.', 'danger')
-                return redirect(url_for('registration'))
+        # Criar novo Cliente
+        sucesso, mensagem = AuthController.registrar_usuario(
+            name=name.title(),
+            email=email.lower(),
+            password=password,
+            re_pass=re_pass,
+            phone=phone,
+            birth_date=birth_date,
+        )
 
-            # Criar novo Cliente
-            cliente = Cliente(
-                name=name.title(),
-                email=email.lower(),
-                phone=phone,
-                birth_date=birth_date,
-            )
-            cliente.set_password(password)
-
-            db.session.add(cliente)
-            db.session.commit()
-
-            flash('Cliente registrado com sucesso!', 'success')
+        if sucesso:
+            flash(mensagem, 'success')
             return redirect(url_for('login'))
-        except Exception as e:
-            db.session.rollback()
-            flash(f'Erro ao registrar: {str(e)}', 'danger')
-    
+        else:
+            flash(mensagem, 'danger')
     return render_template("registration.html")
+
 
 @app.route("/reserva")
 def reserva():
@@ -166,11 +152,10 @@ def reserva():
 
 # Talvez se tenha que apagar
 @app.route("/reserva/<veiculo_id>", methods=["GET", "POST"])
-@login_required
 def reserva_id(veiculo_id):
     """Criar nova reserva"""
     veiculo = Veiculo.query.get_or_404(veiculo_id)
-    formas_pagamento = FormasPagamento.query.filter_by(ativo=True).all()
+    formas_pagamento = PayMethod.query.filter_by(ativo=True).all()
     hoje = date.today().strftime('%Y-%m-%d')
     
     if request.method == "POST":
@@ -374,3 +359,11 @@ def admin():
             return redirect(url_for('admin'))
 
     return render_template("admin.html")
+
+
+
+# @app.route('/dashboard')
+# @login_required
+# def dashboard():
+#     """Dashboard do usuário (rota protegida)"""
+#     return render_template('dashboard.html', usuario=current_user)

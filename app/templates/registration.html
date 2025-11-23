@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <h2 class="page-title">Criar nova conta</h2>
                 <ol class="page-list">
-                    <li><a href="{{ url_for('home')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
                     <li>Registo</li>
                 </ol>
             </div>
@@ -16,20 +16,7 @@
     </div>
 </section>
 <!-- inner-apge-banner end -->
-<!-- Flash mensage renderization start -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="container mt-1">
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-<!-- Flash mensage renderization end -->
+
 <!-- registration-section start -->
 <section class="registration-section pt-120 pb-120">
     <div class="container">
@@ -38,6 +25,15 @@
                 <div class="registration-block text-center">
                     <div class="registration-block-inner">
                         <h3 class="title">crie a sua conta</h3>
+                        <!-- Flash mensage renderization start -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <!-- Flash mensage renderization end -->
                         <form class="registration-form" action="{{ url_for('registration') }}" method="post">
                             <div class="form-group">
                                 <input id="name" name="name" placeholder="O seu Nome completo" type="text" required/>

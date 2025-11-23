@@ -8,8 +8,9 @@
             <div class="col-md-12">
                 <h2 class="page-title">reserva</h2>
                 <ol class="page-list">
-                    <li><a href="{{ url_for('home')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
                     <li><a href="#0">car list</a></li>
+                    <li><a href="{{ url_for('logout')}}"><i class="fa-solid fa-arrow-from-bracket"></i>Logout</a></li>
                     <li>reserva</li>
                 </ol>
             </div>
@@ -17,6 +18,15 @@
     </div>
 </section>
 <!-- inner-apge-banner end -->
+<!-- Flash mensage renderization start -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<!-- Flash mensage renderization end -->
 <!-- reserva-section start -->
 <section class="reserva-section pt-120 pb-120">
     <div class="container">

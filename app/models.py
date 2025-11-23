@@ -1,5 +1,7 @@
+# -*- coding: utf-8 -*-
 from datetime import datetime, date, timedelta
-from app import db, bcrypt
+from flask_login import UserMixin
+from app import db, bcrypt, login_manager
 from flask_migrate import check
 
 ''' -------------------------------------------------------------------------------------------------- '''
@@ -15,23 +17,35 @@ este comando só se roda uma vez para iniciar a cnfiguração do 'migrate'.
         flask db upgrade
         
 ----------------------------------------------------------------------------------------- """
+''' Função para recuperar o usuario para sessão desde Cliente'''
+@login_manager.user_loader
+def load_user(user_id):
+    return Cliente.query.get(user_id)
 
 ''' Classe FormasPagamento para inserir as forma de pagamento'''
-class FormasPagamento(db.Model):        # MB, MBway, CCredito,
+class PayMethod(db.Model):        # MB, MBway, CCredito,
     __tablename__ = 'formas_pagamento'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     nome = db.Column(db.String(50), nullable=False, unique=True)
     ativo = db.Column(db.Boolean, default=True)
-
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='formas_pagamento', lazy='dynamic')
+
+
+    def to_dict(self):
+        if self.ativo == True:
+            return {
+                "id": self.id,
+                "name": self.nome
+            }
 
     def __repr__(self):
         return self.nome
 
+
 ''' Classe Cliente para registar os clientes'''
-class Cliente(db.Model):
+class Cliente(db.Model, UserMixin):
     __tablename__ = 'clientes'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
@@ -40,16 +54,23 @@ class Cliente(db.Model):
     pass_hash = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
-    registration_data = db.Column(db.DateTime, default=datetime.utcnow)
-
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='cliente', lazy='dynamic')
 
+
     def set_password(self, password):
-        self.pass_hash = bcrypt.generate_password_hash(password).decode('utf-8')
+        """Define a Password do usuário (criptografada)"""
+        self.pass_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
 
     def check_password(self, password):
+        """Verifica se a Password está correta"""
         return bcrypt.check_password_hash(self.pass_hash, password)
+
+    def __repr__(self):
+        return f'<Usuario {self.name}'
+
+
 
 ''' Classe Veiculo para registar os Veiculos e seus dados'''
 class Veiculo(db.Model):
@@ -72,12 +93,42 @@ class Veiculo(db.Model):
     data_ultima_revisao = db.Column(db.Date, nullable=False)
     data_proxima_revisao = db.Column(db.Date, nullable=False)
     data_ultima_inspecao = db.Column(db.Date, nullable=False)
-
     ativo = db.Column(db.Boolean, default=True)
     data_cadastro = db.Column(db.DateTime, default=datetime.utcnow)
-
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='veiculo', lazy=True)
+
+    # Crias o Dicionario com as categorias
+    def to_dict(self):
+        if self.ativo == True:
+            return {
+                "id": self.id,
+                "categoria": self.categoria
+            }
+
+    def get_all(self, limit):
+        try:
+            if limit is None:
+                res = db.session.query(Veiculo).all()
+            else:
+                res = db.session.query(Veiculo).order_by(Veiculo.date_created).limit(limit).all()
+        except Exception as e:
+            res = []
+            print(e)
+        finally:
+            db.session.close()
+            return res
+
+    def get_by_id(self):
+        try:
+            res = db.session.query(Veiculo).filter(Veiculo.id == self.id).first()
+        except Exception as e:
+            res = []
+            print(e)
+        finally:
+            db.session.close()
+            return res
+
 
 
 
@@ -98,21 +149,3 @@ class Reserva(db.Model):
     data_reserva = db.Column(db.DateTime, default=datetime.utcnow)
     data_cancelamento = db.Column(db.DateTime, nullable=True)
     motivo_cancelamento = db.Column(db.Text, nullable=True)
-
-    def calcular_valor_total(self):
-        """Calcula o valor total baseado no número de dias"""
-        if self.data_inicio and self.data_fim and self.veiculo:
-            dias = (self.data_fim - self.data_inicio).days
-            if dias <= 0:
-                dias = 1
-            return float(self.veiculo.valor_diaria) * dias
-        return 0.0
-
-    def get_numero_dias(self):
-        """Retorna o número de dias da reserva"""
-        if self.data_inicio and self.data_fim:
-            dias = (self.data_fim - self.data_inicio).days
-            return dias if dias > 0 else 1
-        return 0
-
-

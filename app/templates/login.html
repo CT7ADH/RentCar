@@ -8,7 +8,7 @@
             <div class="col-md-12">
                 <h2 class="page-title">Iniciar sessão</h2>
                 <ol class="page-list">
-                    <li><a href="{{ url_for('home')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
                     <li>Iniciar sessão</li>
                 </ol>
             </div>
@@ -16,20 +16,7 @@
     </div>
 </section>
 <!-- inner-apge-banner end -->
-<!-- Flash mensage renderization start -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-  {% if messages %}
-    <div class="container mt-1">
-      {% for category, message in messages %}
-        <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
-          {{ message }}
-          <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
-        </div>
-      {% endfor %}
-    </div>
-  {% endif %}
-{% endwith %}
-<!-- Flash mensage renderization end -->
+ 
 <!-- login-section start -->
 <section class="login-section pt-120 pb-120">
     <div class="container">
@@ -38,6 +25,15 @@
                 <div class="login-block text-center">
                     <div class="login-block-inner">
                         <h3 class="title">inicie sessão na sua conta </h3>
+                        <!-- Flash mensage renderization start -->
+                        {% with messages = get_flashed_messages(with_categories=true) %}
+                            {% if messages %}
+                                {% for category, message in messages %}
+                                    <div class="alert alert-{{ category }}">{{ message }}</div>
+                                {% endfor %}
+                            {% endif %}
+                        {% endwith %}
+                        <!-- Flash mensage renderization end -->
                         <form class="login-form" action="{{ url_for('login') }}" method="post">
                             <div class="frm-group text-center">
                                 <a class="facebook" href="#0">facebook</a>
