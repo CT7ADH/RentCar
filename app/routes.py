@@ -28,11 +28,16 @@ def root():
 def car_list():
     """ Listagem de veículos com filtros """
     if request.method == 'POST':
-        pass
+        search_type = request.form.get("ordenar")
+        search_result = VeiculoControler().get_search_type(arg_search=search_type)
+
+        context = VeiculoControler().get_veiculos(limit=None)
+        return render_template("car_list.html", context=context, search_result=search_result, ordenar=search_type)
+
     else:
 
         context = VeiculoControler().get_veiculos(limit=None)
-        return render_template("car_list.html", context=context)
+        return render_template("car_list.html", context=context, )
 
 
 @app.route("/login", methods=["GET", "POST"])
@@ -68,8 +73,8 @@ def logout():
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
     """ Registro de novos clientes """
-    if current_user.is_authenticated:
-        return redirect(url_for('registration'))
+    # if current_user.is_authenticated:
+    #     return redirect(url_for('registration'))
 
     if request.method == "POST":
 

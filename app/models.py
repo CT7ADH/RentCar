@@ -130,6 +130,31 @@ class Veiculo(db.Model):
             db.session.close()
             return res
 
+    def get_search_type(self, arg_search):
+        try:
+            if arg_search is None:
+                res = db.session.query(Veiculo).all()
+                return res
+            elif arg_search == "marca":
+                res = db.session.query(Veiculo.marca).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.marca).all()
+                return res
+            elif arg_search == "modelo":
+                res = db.session.query(Veiculo.modelo).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.modelo).all()
+                return res
+            elif arg_search == "categoria":
+                res = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.categoria).all()
+                return res
+
+        except Exception as e:
+            res = []
+            print(e)
+        finally:
+            db.session.close()
+            # Converte lista de tuplas em lista simples
+            return [indice[0] for indice in res]
+
+
+
     # Metodo: Buscar categorias únicas de veículos ativos
     @staticmethod
     def get_categorias_ativas():

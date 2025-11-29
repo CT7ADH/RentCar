@@ -1,0 +1,198 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- inner-apge-banner start -->
+<section class="inner-page-banner bg_img overlay-3" data-background="static/images/inner-page-bg.jpg">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">reserva</h2>
+                <ol class="page-list">
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="#0">lista de carros</a></li>
+                    <li>reserva</li>
+                    <li><a href="{{ url_for('logout')}}"><i class="fa-solid fa-arrow-from-bracket"></i>Logout</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inner-apge-banner end -->
+<!-- Flash mensage renderization start -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<!-- Flash mensage renderization end -->
+<!-- car-search-section start -->
+<section class="car-search-section pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            <div class="col-lg-12">
+                <div class="car-search-filter-area">
+                    <div class="car-search-filter-form-area">
+                        <!-- Inicio do form-->
+                        <form class="car-search-filter-form"action="{{ url_for('car_list') }}" method="post">
+                            <div class="row justify-content-between">
+                                <div class="col-lg-4 col-md-5 col-sm-6">
+                                    <div class="cart-sort-field">
+                                        <span class="caption">Ordenar por : </span>
+                                        <select name="ordenar" id="ordenar" onchange="this.form.submit()">
+                                            <option value="None">Todos os Veículos</option>
+                                            <option value="marca">Marca</option>
+                                            <option value="modelo">Modelo</option>
+                                            <option value="categoria">Categoria</option>
+                                            <option value="transmissao">Transmissão</option>
+                                            <option value="tipo_veiculo">Tipo de Veiculo</option>
+                                            <option value="valor_diaria">Preço</option>
+                                            <option value="capacidade_pessoas">Nº de Ocupantes</option>
+                                            <option value="">Reserva</option>                                            
+                                        </select>
+                                    </div>
+                                </div>
+                                <div class="col-lg-7 col-md-7 col-sm-6 d-flex">
+                                    <!-- <input id="car_search" name="car_search" placeholder="Pesquise o que deseja........"
+                                           type="text"/> -->
+                                <select>
+                                    <option selected="" value="">Pesquize o que deseja</option>
+                                    {% for cat in search_result %}
+                                    <option value="{{cat}}">{{cat}}</option>
+                                    {% endfor %}                                    
+                                </select>
+
+                                    <button class="search-submit-btn">Pesquisar</button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                    <div class="view-style-toggle-area">
+                        <button class="view-btn list-btn"><i class="fa fa-bars"></i></button>
+                        <button class="view-btn grid-btn active"><i class="fa fa-th-large"></i></button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <div class="row mt-70">
+            <div class="col-lg-8">
+                <div class="car-search-result-area grid--view row mb-none-30">
+                    {% for veiculo in context %}
+                    <div class="col-md-6 col-12">
+                        <div class="car-item">
+                            <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
+                            <div class="car-item-body">
+                                <div class="content">
+                                    <h4 class="title">{{ veiculo.marca }} {{ veiculo.modelo }}</h4>
+                                    <span class="price">a partir de <strong>{{ veiculo.valor_diaria }}€ </strong> por dia</span>
+                                    <p>{{ 'Veículo disponível para alugar.' if veiculo.ativo else 'Veículo de momento indisponível.' }}</p>
+                                    <a class="cmn-btn" href="{{ url_for('reserva', veiculo_id=veiculo.id) }}">alugar carro</a>
+                                </div>
+                                <div class="car-item-meta">
+                                    <ul class="details-list">
+                                        <li><i class="fa fa-car"></i>{{ veiculo.ano }}</li>
+                                        <li><i class="fa fa-tachometer"></i>{{ veiculo.kilometragem }} Km</li>
+                                        <li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
+                                    </ul>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                </div>
+                <nav aria-label="Page navigation example" class="d-pagination">
+                    <ul class="pagination justify-content-center">
+                        <li class="page-item active"><a class="page-link" href="#">1</a></li>
+                        <li class="page-item"><a class="page-link" href="#">2</a></li>
+                        <li class="page-item"><a class="page-link" href="#">3</a></li>
+                        <li class="page-item"><a class="page-link" href="#">4</a></li>
+                        <li class="page-item"><a class="page-link" href="#">5</a></li>
+                    </ul>
+                </nav>
+            </div>
+            <div class="col-lg-4">
+                <aside class="sidebar">
+                    <div class="widget widget-reserva">
+                        <h4 class="widget-title">reserva</h4>
+                        <div class="widget-body">
+                            <form class="car-search-form">
+                                <div class="row">
+                                    <div class="col-lg-12 form-group">
+                                        <select name="veiculo_id" required>
+                                            <option value="">Escolha o Tipo de Carro</option>
+                                            {% for veiculo in context %}
+                                            <option value="{{ veiculo.id }}">{{ veiculo.categoria }}</option>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-map-marker"></i>
+                                        <input class="form-control has-icon" placeholder="Local de levantamento"
+                                               type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-map-marker"></i>
+                                        <input class="form-control has-icon" placeholder="Local de entrega"
+                                               type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-calendar"></i>
+                                        <input class="form-control has-icon datepicker-here" data-language="en"
+                                               placeholder="Data de levantamento" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input class="form-control has-icon timepicker" name="timepicker" placeholder="Hora de levantamento" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-calendar"></i>
+                                        <input class="form-control has-icon datepicker-here" data-language="en" placeholder="Data de entrega" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-12">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input class="form-control has-icon timepicker" name="timepicker" placeholder="Hora de entrega" type="text"/>
+                                    </div>
+                                </div>
+                                <button class="cmn-btn" type="submit">Reserva</button>
+                            </form>
+                        </div>
+                    </div><!-- widget end -->
+                    <div class="widget widget-price-filter">
+                        <h4 class="widget-title">filtro de preço</h4>
+                        <div class="widget-body">
+                            <div id="slider-range"></div>
+                            <div class="filter-price-result">
+                                <input id="amount" readonly="" type="text"/><span>(Por Dia)</span>
+                            </div>
+                        </div>
+                    </div><!-- widget end -->
+                    <div class="widget widget-testemunho">
+                        <h4 class="widget-title">testemunho</h4>
+                        <div class="widget-body">
+                            <div class="testemunho-slider owl-carousel">
+                                <div class="testemunho-item">
+                                    <div class="testemunho-item--header">
+                                        <div class="thumb">
+                                            <img alt="image" src="static/images/testemunho/1.jpg"/>
+                                        </div>
+                                        <div class="content">
+                                            <h6 class="name">martin hook</h6>
+                                            <span class="designation">empresário</span>
+                                        </div>
+                                    </div>
+                                    <div class="testemunho-item--body">
+                                        <p>Tristique consequat, lorem sed vivamus donec eget, nulla pharetra lacinia
+                                            wisi diamaliquam velit nec.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- widget end -->
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- car-search-section end -->
+ {% endblock %}

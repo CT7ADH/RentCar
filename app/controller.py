@@ -74,7 +74,17 @@ class VeiculoControler():
             print(f"Erro ao buscar categorias: {e}")
             result = []
         finally:
+            print(result)
             return result
+
+    def get_search_type(self, arg_search):
+        try:
+            search_type = self.veiculo_model.get_search_type(arg_search)
+        except Exception as e:
+            print(f"Erro ao buscar categorias: {e}")
+            search_type = []
+        finally:
+            return search_type
 
     def is_disponivel(self, data_inicio=None, data_fim=None):
         """Verifica se o veículo está disponível"""
