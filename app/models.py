@@ -132,28 +132,68 @@ class Veiculo(db.Model):
 
     def get_search_type(self, arg_search):
         try:
-            if arg_search is None:
+            if arg_search is None or arg_search == "None":
                 res = db.session.query(Veiculo).all()
-                return res
             elif arg_search == "marca":
                 res = db.session.query(Veiculo.marca).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.marca).all()
-                return res
             elif arg_search == "modelo":
                 res = db.session.query(Veiculo.modelo).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.modelo).all()
-                return res
             elif arg_search == "categoria":
                 res = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.categoria).all()
-                return res
+            elif arg_search == "transmissao":
+                res = db.session.query(Veiculo.transmissao).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.transmissao).all()
+            elif arg_search == "tipo_veiculo":
+                res = db.session.query(Veiculo.tipo_veiculo).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.tipo_veiculo).all()
+            elif arg_search == "valor_diaria":
+                res = db.session.query(Veiculo.valor_diaria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.valor_diaria).all()
+                print(res)
+            elif arg_search == "capacidade_pessoas":
+                res = db.session.query(Veiculo.capacidade_pessoas).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.capacidade_pessoas).all()
+            else:
+                res = db.session.query(Veiculo).all()
 
         except Exception as e:
             res = []
-            print(e)
+            print(f"Erro na busca: {e}")
         finally:
             db.session.close()
             # Converte lista de tuplas em lista simples
-            return [indice[0] for indice in res]
+            return [indice[0] for indice in res] if res and not isinstance(res[0], Veiculo) else res
 
+    def get_veiculos_by_filter(self, tipo_filtro, valor_filtro):
+        """Busca veículos baseado no filtro selecionado"""
+        try:
+            if tipo_filtro == "marca":
+                res = db.session.query(Veiculo).filter(Veiculo.marca == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.marca).all()
 
+            elif tipo_filtro == "modelo":
+                res = db.session.query(Veiculo).filter(Veiculo.modelo == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.modelo).all()
+
+            elif tipo_filtro == "categoria":
+                res = db.session.query(Veiculo).filter(Veiculo.categoria == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.categoria).all()
+
+            elif tipo_filtro == "transmissao":
+                res = db.session.query(Veiculo).filter(Veiculo.transmissao == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.transmissao).all()
+
+            elif tipo_filtro == "tipo_veiculo":
+                res = db.session.query(Veiculo).filter(Veiculo.tipo_veiculo == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.tipo_veiculo).all()
+
+            elif tipo_filtro == "capacidade_pessoas":
+                res = db.session.query(Veiculo).filter(Veiculo.capacidade_pessoas == int(valor_filtro),Veiculo.ativo == True).order_by(Veiculo.capacidade_pessoas).all()
+
+            elif tipo_filtro == "valor_diaria":
+                # Para valor diária, ordenar por preço
+                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).order_by(Veiculo.valor_diaria).all()
+            else:
+                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).all()
+
+            return res
+
+        except Exception as e:
+            print(f"Erro ao filtrar veículos: {e}")
+            return []
+        finally:
+            db.session.close()
 
     # Metodo: Buscar categorias únicas de veículos ativos
     @staticmethod

@@ -1,4 +1,4 @@
-# -*- coding: utf-8 -*-
+ # -*- coding: utf-8 -*-
 from datetime import date, timedelta
 from app import db
 from flask_login import login_user, logout_user
@@ -85,6 +85,34 @@ class VeiculoControler():
             search_type = []
         finally:
             return search_type
+
+    def get_veiculos_filtrados(self, tipo_filtro, valor_filtro):
+        """Retorna veículos filtrados por tipo e valor"""
+        result = []
+        try:
+            veiculos = self.veiculo_model.get_veiculos_by_filter(tipo_filtro, valor_filtro)
+
+            for v in veiculos:
+                result.append({
+                    'id': v.id,
+                    'marca': v.marca,
+                    'modelo': v.modelo,
+                    'categoria': v.categoria,
+                    'transmissao': v.transmissao,
+                    'tipo_veiculo': v.tipo_veiculo,
+                    'capacidade_pessoas': v.capacidade_pessoas,
+                    'valor_diaria': v.valor_diaria,
+                    'imagem_url': v.imagem_url,
+                    'cor': v.cor,
+                    'ano': v.ano,
+                    'kilometragem': v.kilometragem,
+                    'ativo': v.ativo
+                })
+        except Exception as e:
+            print(f"Erro ao buscar veículos filtrados: {e}")
+            result = []
+        finally:
+            return result
 
     def is_disponivel(self, data_inicio=None, data_fim=None):
         """Verifica se o veículo está disponível"""

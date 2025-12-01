@@ -7,8 +7,9 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
-''' -------------------------------------------------------------------------------------------------- '''
 
+
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def root():
@@ -24,22 +25,81 @@ def root():
         categorias = VeiculoControler().get_used_categorias()
         return render_template("index.html", context=veiculos, categorias=categorias)
 
+
+# ''' -------------------------------------------------------------------------------------------------- '''
+# @app.route("/car_list", methods=["GET", "POST"])
+# def car_list():
+#     """ Listagem de veículos com filtros """
+#     if request.method == 'POST':
+#         search_type = request.form.get("ordenar")
+#
+#         # Se for "None" ou vazio, mostra todos
+#         if search_type and search_type != "None":
+#             search_result = VeiculoControler().get_search_type(arg_search=search_type)
+#         else:
+#             search_result = []
+#
+#         context = VeiculoControler().get_veiculos(limit=None)
+#         return render_template("car_list.html", context=context, search_result=search_result, ordenar=search_type)
+#     else:
+#         # GET - mostra todos os veículos
+#         context = VeiculoControler().get_veiculos(limit=None)
+#         search_result = []  # Lista vazia para o select de pesquisa
+#         return render_template("car_list.html", context=context, search_result=search_result)
+
+@app.route("/get_filter_options", methods=["GET"])
+def get_filter_options():
+    """Retorna opções de filtro baseado no tipo selecionado"""
+    tipo = request.args.get('tipo')
+
+    if not tipo or tipo == 'None':
+        return jsonify({'opcoes': []})
+
+    try:
+        opcoes = VeiculoControler().get_search_type(arg_search=tipo)
+        return jsonify({'opcoes': opcoes})
+    except Exception as e:
+        print(f"Erro ao buscar opções: {e}")
+        return jsonify({'opcoes': [], 'erro': str(e)})
+
+
 @app.route("/car_list", methods=["GET", "POST"])
 def car_list():
     """ Listagem de veículos com filtros """
     if request.method == 'POST':
         search_type = request.form.get("ordenar")
-        search_result = VeiculoControler().get_search_type(arg_search=search_type)
+        filtro_valor = request.form.get("filtro_valor")
 
-        context = VeiculoControler().get_veiculos(limit=None)
-        return render_template("car_list.html", context=context, search_result=search_result, ordenar=search_type)
+        # Buscar as opções para o select de filtro baseado no tipo
+        if search_type and search_type != "None":
+            search_result = VeiculoControler().get_search_type(arg_search=search_type)
+        else:
+            search_result = []
 
+        # Se houver um valor de filtro específico, filtrar os veículos
+        if filtro_valor and filtro_valor != "":
+            context = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
+        else:
+            # Se só selecionou o tipo mas não o valor, mostrar todos
+            context = VeiculoControler().get_veiculos(limit=None)
+
+        return render_template(
+            "car_list.html",
+            context=context,
+            search_result=search_result,
+            ordenar=search_type,
+            filtro_selecionado=filtro_valor
+        )
     else:
-
+        # GET - mostra todos os veículos
         context = VeiculoControler().get_veiculos(limit=None)
-        return render_template("car_list.html", context=context, )
-
-
+        search_result = []
+        return render_template(
+            "car_list.html",
+            context=context,
+            search_result=search_result
+        )
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """ Rota de login """
@@ -61,6 +121,7 @@ def login():
     return render_template('login.html')
 
 
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/logout")
 @login_required
 def logout():
@@ -70,6 +131,7 @@ def logout():
     return redirect(url_for('login'))
 
 
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
     """ Registro de novos clientes """
@@ -103,17 +165,24 @@ def registration():
     return render_template("registration.html")
 
 
+
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/reserva")
 def reserva():
 
     return render_template("reserva.html", data={'status': 200, 'msg': None, 'type': None})
 
+
+
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/contact")
 def contact():
     """Página de contato"""
     return render_template("contact.html")
 
 
+
+''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     """Administração de veículos"""

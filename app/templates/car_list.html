@@ -41,29 +41,33 @@
                                     <div class="cart-sort-field">
                                         <span class="caption">Ordenar por : </span>
                                         <select name="ordenar" id="ordenar" onchange="this.form.submit()">
-                                            <option value="None">Todos os Veículos</option>
-                                            <option value="marca">Marca</option>
-                                            <option value="modelo">Modelo</option>
-                                            <option value="categoria">Categoria</option>
-                                            <option value="transmissao">Transmissão</option>
-                                            <option value="tipo_veiculo">Tipo de Veiculo</option>
-                                            <option value="valor_diaria">Preço</option>
-                                            <option value="capacidade_pessoas">Nº de Ocupantes</option>
-                                            <option value="">Reserva</option>                                            
+                                            <option value="None" {% if not ordenar or ordenar == 'None' %}selected{% endif %}>Todos os Veículos</option>
+                                            <option value="marca" {% if ordenar == 'marca' %}selected{% endif %}>Marca</option>
+                                            <option value="modelo" {% if ordenar == 'modelo' %}selected{% endif %}>Modelo</option>
+                                            <option value="categoria" {% if ordenar == 'categoria' %}selected{% endif %}>Categoria</option>
+                                            <option value="transmissao" {% if ordenar == 'transmissao' %}selected{% endif %}>Transmissão</option>
+                                            <option value="tipo_veiculo" {% if ordenar == 'tipo_veiculo' %}selected{% endif %}>Tipo de Veículo</option>
+                                            <option value="valor_diaria" {% if ordenar == 'valor_diaria' %}selected{% endif %}>Preço</option>
+                                            <option value="capacidade_pessoas" {% if ordenar == 'capacidade_pessoas' %}selected{% endif %}>Nº de Ocupantes</option>
                                         </select>
                                     </div>
                                 </div>
                                 <div class="col-lg-7 col-md-7 col-sm-6 d-flex">
-                                    <!-- <input id="car_search" name="car_search" placeholder="Pesquise o que deseja........"
-                                           type="text"/> -->
-                                <select>
-                                    <option selected="" value="">Pesquize o que deseja</option>
-                                    {% for cat in search_result %}
-                                    <option value="{{cat}}">{{cat}}</option>
-                                    {% endfor %}                                    
-                                </select>
-
-                                    <button class="search-submit-btn">Pesquisar</button>
+                                    <select name="filtro_valor" id="filtro_valor" {% if not search_result %}disabled{% endif %}>
+                                        <option value="">
+                                            {% if search_result %}
+                                                Selecione para filtrar
+                                            {% else %}
+                                                Primeiro selecione "Ordenar por"
+                                            {% endif %}
+                                        </option>
+                                        {% for item in search_result %}
+                                        <option value="{{ item }}" {% if filtro_selecionado == item %}selected{% endif %}>
+                                            {{ item }}
+                                        </option>
+                                        {% endfor %}
+                                    </select>
+                                    <button class="search-submit-btn" type="submit">Pesquisar</button>
                                 </div>
                             </div>
                         </form>
@@ -78,28 +82,37 @@
         <div class="row mt-70">
             <div class="col-lg-8">
                 <div class="car-search-result-area grid--view row mb-none-30">
-                    {% for veiculo in context %}
-                    <div class="col-md-6 col-12">
-                        <div class="car-item">
-                            <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
-                            <div class="car-item-body">
-                                <div class="content">
-                                    <h4 class="title">{{ veiculo.marca }} {{ veiculo.modelo }}</h4>
-                                    <span class="price">a partir de <strong>{{ veiculo.valor_diaria }}€ </strong> por dia</span>
-                                    <p>{{ 'Veículo disponível para alugar.' if veiculo.ativo else 'Veículo de momento indisponível.' }}</p>
-                                    <a class="cmn-btn" href="{{ url_for('reserva', veiculo_id=veiculo.id) }}">alugar carro</a>
-                                </div>
-                                <div class="car-item-meta">
-                                    <ul class="details-list">
-                                        <li><i class="fa fa-car"></i>{{ veiculo.ano }}</li>
-                                        <li><i class="fa fa-tachometer"></i>{{ veiculo.kilometragem }} Km</li>
-                                        <li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
-                                    </ul>
+                    {% if context %}
+                        {% for veiculo in context %}
+                        <div class="col-md-6 col-12">
+                            <div class="car-item">
+                                <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
+                                <div class="car-item-body">
+                                    <div class="content">
+                                        <h4 class="title">{{ veiculo.marca }} {{ veiculo.modelo }}</h4>
+                                        <span class="price">a partir de <strong>{{ veiculo.valor_diaria }}€ </strong> por dia</span>
+                                        <p>{{ 'Veículo disponível para alugar.' if veiculo.ativo else 'Veículo de momento indisponível.' }}</p>
+                                        <a class="cmn-btn" href="{{ url_for('reserva', veiculo_id=veiculo.id) }}">alugar carro</a>
+                                    </div>
+                                    <div class="car-item-meta">
+                                        <ul class="details-list">
+                                            <li><i class="fa fa-car"></i>{{ veiculo.ano }}</li>
+                                            <li><i class="fa fa-tachometer"></i>{{ veiculo.kilometragem }} Km</li>
+                                            <li><i class="fa fa-sliders"></i>{{ veiculo.transmissao }}</li>
+                                        </ul>
+                                    </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
-                    {% endfor %}
+                        {% endfor %}
+                    {% else %}
+                        <div class="col-12">
+                            <div class="alert alert-info text-center">
+                                <h4>Nenhum veículo encontrado com os filtros selecionados.</h4>
+                                <p>Tente ajustar os filtros ou <a href="{{ url_for('car_list') }}">ver todos os veículos</a>.</p>
+                            </div>
+                        </div>
+                    {% endif %}
                 </div>
                 <nav aria-label="Page navigation example" class="d-pagination">
                     <ul class="pagination justify-content-center">
