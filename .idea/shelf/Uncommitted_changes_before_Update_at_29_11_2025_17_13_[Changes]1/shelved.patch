@@ -1,0 +1,19 @@
+Index: main.py
+IDEA additional info:
+Subsystem: com.intellij.openapi.diff.impl.patch.BaseRevisionTextPatchEP
+<+># -*- coding: utf-8 -*-\r\nfrom app import app\r\n\r\n\r\nif __name__ == \"__main__\":\r\n    # Colocar o site no ar\r\n    app.run(debug=True)\r\n\r\n
+Subsystem: com.intellij.openapi.diff.impl.patch.CharsetEP
+<+>UTF-8
+===================================================================
+diff --git a/main.py b/main.py
+--- a/main.py	(revision 3ed8da6c1eb8c2ac3a8a3320ffbc8b2f5537b671)
++++ b/main.py	(date 1764436412709)
+@@ -4,5 +4,7 @@
+ 
+ if __name__ == "__main__":
+     # Colocar o site no ar
+-    app.run(debug=True)
++    #app.run(debug=True)
++    app.run(debug=True, host='0.0.0.0')
++
+ 
