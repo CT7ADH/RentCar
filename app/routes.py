@@ -21,7 +21,7 @@ def root():
         # Method para controle de datas para disponibilizar veiculo
 
 
-        veiculos = VeiculoControler().get_veiculos(limit=6)
+        veiculos = VeiculoControler().get_all(limit=6)
         categories = VeiculoControler().get_used_categorias()
         context = {
             'veiculos': veiculos,
@@ -49,7 +49,7 @@ def car_list():
             context = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
         else:
             # Se só selecionou o tipo mas não o valor, mostrar todos
-            context = VeiculoControler().get_veiculos(limit=None)
+            context = VeiculoControler().get_all(limit=None)
 
         return render_template(
             "car_list.html",
@@ -60,7 +60,7 @@ def car_list():
         )
     else:
         # GET - mostra todos os veículos
-        context = VeiculoControler().get_veiculos(limit=None)
+        context = VeiculoControler().get_all(limit=None)
         search_result = []
         return render_template("car_list.html", context=context, search_result=search_result
         )
@@ -72,18 +72,22 @@ def login():
         return redirect(url_for('car_list'))
 
     if request.method == 'POST':
-        email = request.form.get('email')
-        password = request.form.get('password')
 
-        sucesso, mensagem, usuario = AuthController.autenticar_usuario(email=email.lower(), password=password)
+        login_data = {
+            "email": request.form["email"].lower(),
+            "password": request.form["password"]
+        }
+        # use o desempacotamento de dicionário (**)
+        sucesso, mensagem, usuario = AuthController.autenticar_usuario(**login_data)
 
         if sucesso:
             flash(mensagem, 'success')
             return redirect(url_for('car_list'))
         else:
             flash(mensagem, 'danger')
+            return render_template('login.html', context=login_data)
 
-    return render_template('login.html')
+    return render_template('login.html', context={})
 
 
 ''' -------------------------------------------------------------------------------------------------- '''
@@ -135,11 +139,25 @@ def registration():
 
 
     return render_template("registration.html", dados={})
+
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/reserva")
 def reserva():
 
-    return render_template("reserva.html", data={'status': 200, 'msg': None, 'type': None})
+    return render_template("reserva.html")
+
+''' -------------------------------------------------------------------------------------------------- '''
+@app.route("/reserva/<int:id>")
+def cria_reserva(id):
+
+    veiculo = VeiculoControler().get_by_id(id)
+
+    context = {
+        'car': veiculo,
+
+    }
+    return render_template("reserva.html", context=context)
+
 
 
 

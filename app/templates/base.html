@@ -7,27 +7,27 @@
     <meta content="ie=edge" http-equiv="X-UA-Compatible"/>
     <title>Luxury Wheels - RentCar</title>
     <!-- site favicon -->
-    <link href="static/images/favicon.jpg" rel="shortcut icon" type="image/png"/>
+    <link href="{{ url_for('static', filename='images/favicon.jpg') }}" rel="shortcut icon" type="image/png"/>
     <!-- fontawesome css link -->
-    <link href="static/css/fontawesome.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/fontawesome.min.css') }}" rel="stylesheet"/>
     <!-- bootstrap css link -->
-    <link href="static/css/bootstrap.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/bootstrap.min.css') }}" rel="stylesheet"/>
     <!-- lightcase css link -->
-    <link href="static/css/lightcase.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/lightcase.css') }}" rel="stylesheet"/>
     <!-- animate css link -->
-    <link href="static/css/animate.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/animate.css') }}" rel="stylesheet"/>
     <!-- nice select css link -->
-    <link href="static/css/nice-select.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/nice-select.css') }}" rel="stylesheet"/>
     <!-- datepicker css link -->
-    <link href="static/css/datepicker.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/datepicker.min.css') }}" rel="stylesheet"/>
     <!-- wickedpicker css link -->
-    <link href="static/css/wickedpicker.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/wickedpicker.min.css') }}" rel="stylesheet"/>
     <!-- jquery ui css link -->
-    <link href="static/css/jquery-ui.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/jquery-ui.min.css') }}" rel="stylesheet"/>
     <!-- owl carousel css link -->
-    <link href="static/css/owl.carousel.min.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/owl.carousel.min.css') }}" rel="stylesheet"/>
     <!-- main style css link -->
-    <link href="static/css/main.css" rel="stylesheet"/>
+    <link href="{{ url_for('static', filename='css/main.css') }}" rel="stylesheet"/>
 </head>
 <body>
 <!--  header-section start  -->
@@ -36,7 +36,7 @@
         <div class="container">
             <nav class="navbar navbar-expand-lg p-0">
                 <a class="site-logo site-title" href="{{ url_for('root')}}"><img alt="site-logo"
-                                                                       src="static/images/logo2.png"/><span
+                                                                       src="{{ url_for('static', filename='images/logo2.png') }}"/><span
                         class="logo-icon"><i class="flaticon-fire"></i></span></a>
                 <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
                         class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse"
@@ -70,7 +70,7 @@
                     <div class="footer-widget widget-about">
                         <div class="widget-about-content">
                             <a class="footer-logo" href="{{ url_for('root')}}"><img alt="logo"
-                                                                          src="static/images/logo-footer.png"/></a>
+                                                                          src="{{ url_for('static', filename='images/logo-footer.png') }}"/></a>
                             <p>Lorem ipsum dolor sit amet, congue placeranec. Leo faucibus sed eleifend bibendum n
                                 vehicula nulla mauris nulla ipsum neque sed. Gravida egestas fermentum urna, velit
                                 sed. </p>
@@ -108,27 +108,27 @@
 </footer>
 <!-- footer-section end -->
 <!-- jquery js link -->
-<script src="static/js/jquery-3.3.1.min.js"></script>
+<script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
 <!-- jquery migrate js link -->
-<script src="static/js/jquery-migrate-3.0.0.js"></script>
+<script src="{{ url_for('static', filename='js/jquery-migrate-3.0.0.js') }}"></script>
 <!-- bootstrap js link -->
-<script src="static/js/bootstrap.min.js"></script>
+<script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
 <!-- lightcase js link -->
-<script src="static/js/lightcase.js"></script>
+<script src="{{ url_for('static', filename='js/lightcase.js') }}"></script>
 <!-- wow js link -->
-<script src="static/js/wow.min.js"></script>
+<script src="{{ url_for('static', filename='js/wow.min.js') }}"></script>
 <!-- nice select js link -->
-<script src="static/js/jquery.nice-select.min.js"></script>
+<script src="{{ url_for('static', filename='js/jquery.nice-select.min.js') }}"></script>
 <!-- datepicker js link -->
-<script src="static/js/datepicker.min.js"></script>
-<script src="static/js/datepicker.en.js"></script>
+<script src="{{ url_for('static', filename='js/datepicker.min.js') }}"></script>
+<script src="{{ url_for('static', filename='js/datepicker.en.js') }}"></script>
 <!-- wickedpicker js link -->
-<script src="static/js/wickedpicker.min.js"></script>
+<script src="{{ url_for('static', filename='js/wickedpicker.min.js') }}"></script>
 <!-- owl carousel js link -->
-<script src="static/js/owl.carousel.min.js"></script>
+<script src="{{ url_for('static', filename='js/owl.carousel.min.js') }}"></script>
 <!-- jquery ui js link -->
-<script src="static/js/jquery-ui.min.js"></script>
+<script src="{{ url_for('static', filename='js/jquery-ui.min.js') }}"></script>
 <!-- main js link -->
-<script src="static/js/main.js"></script>
+<script src="{{ url_for('static', filename='js/main.js') }}"></script>
 </body>
 </html>

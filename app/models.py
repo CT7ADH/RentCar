@@ -124,12 +124,12 @@ class Veiculo(db.Model):
             db.session.close()
             return res
 
-    def get_by_id(self):
+    def get_by_id(self, id):
         try:
-            res = db.session.query(Veiculo).filter(Veiculo.id == self.id).first()
+            res = db.session.query(Veiculo).filter(Veiculo.id==id).first()
         except Exception as e:
             res = []
-            print(e)
+            print(f"Erro ao buscar veículo por ID: {e}")
         finally:
             db.session.close()
             return res

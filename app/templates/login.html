@@ -44,10 +44,10 @@
                                 <span class="ou">ou</span>
                             </div>
                             <div class="frm-group">
-                                <input id="email" name="email" placeholder="O seu E-mail" type="text"/>
+                                <input id="email" name="email" placeholder="O seu E-mail" type="text" value="{{ context.email if context else '' }}"/>
                             </div>
                             <div class="frm-group">
-                                <input id="password" name="password" placeholder="Digite a sua Password" type="password"/>
+                                <input id="password" name="password" placeholder="Digite a sua Password" type="password" value="{{ context.password if context else '' }}"/>
                             </div>
                             <div class="frm-group">
                                 <input type="submit" value="iniciar sessão"/>

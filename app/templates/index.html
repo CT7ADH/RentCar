@@ -146,7 +146,7 @@
                             <h4 class="title">{{veiculo.marca}} {{veiculo.modelo}}</h4>
                             <span class="price">a partir de <strong>{{ veiculo.valor_diaria }}€ </strong> por dia</span>
                             <p>{{ 'Veículo disponível para alugar.' if veiculo.ativo else 'Veículo de momento indisponível.' }}</p>
-                            <a class="cmn-btn" href="{{ url_for('reserva', veiculo_id=veiculo.id) }}">alugar carro</a>
+                            <a class="cmn-btn" href="{{ url_for('cria_reserva', id=veiculo.id) }}">alugar carro</a>
                         </div>
                         <div class="car-item-meta">
                             <ul class="details-list">
