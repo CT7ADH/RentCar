@@ -7,8 +7,6 @@ from flask_login import login_user, logout_user, login_required, current_user
 
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
-
-
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
@@ -20,48 +18,18 @@ def root():
     if request.method == 'POST':
         pass
     else:
+        # Method para controle de datas para disponibilizar veiculo
+
 
         veiculos = VeiculoControler().get_veiculos(limit=6)
-        categorias = VeiculoControler().get_used_categorias()
-        return render_template("index.html", context=veiculos, categorias=categorias)
+        categories = VeiculoControler().get_used_categorias()
+        context = {
+            'veiculos': veiculos,
+            'categories': categories,
+        }
+        return render_template("index.html", context=context)
 
-
-# ''' -------------------------------------------------------------------------------------------------- '''
-# @app.route("/car_list", methods=["GET", "POST"])
-# def car_list():
-#     """ Listagem de veículos com filtros """
-#     if request.method == 'POST':
-#         search_type = request.form.get("ordenar")
-#
-#         # Se for "None" ou vazio, mostra todos
-#         if search_type and search_type != "None":
-#             search_result = VeiculoControler().get_search_type(arg_search=search_type)
-#         else:
-#             search_result = []
-#
-#         context = VeiculoControler().get_veiculos(limit=None)
-#         return render_template("car_list.html", context=context, search_result=search_result, ordenar=search_type)
-#     else:
-#         # GET - mostra todos os veículos
-#         context = VeiculoControler().get_veiculos(limit=None)
-#         search_result = []  # Lista vazia para o select de pesquisa
-#         return render_template("car_list.html", context=context, search_result=search_result)
-
-@app.route("/get_filter_options", methods=["GET"])
-def get_filter_options():
-    """Retorna opções de filtro baseado no tipo selecionado"""
-    tipo = request.args.get('tipo')
-
-    if not tipo or tipo == 'None':
-        return jsonify({'opcoes': []})
-
-    try:
-        opcoes = VeiculoControler().get_search_type(arg_search=tipo)
-        return jsonify({'opcoes': opcoes})
-    except Exception as e:
-        print(f"Erro ao buscar opções: {e}")
-        return jsonify({'opcoes': [], 'erro': str(e)})
-
+''' -------------------------------------------------------------------------------------------------- '''
 
 @app.route("/car_list", methods=["GET", "POST"])
 def car_list():
@@ -94,17 +62,14 @@ def car_list():
         # GET - mostra todos os veículos
         context = VeiculoControler().get_veiculos(limit=None)
         search_result = []
-        return render_template(
-            "car_list.html",
-            context=context,
-            search_result=search_result
+        return render_template("car_list.html", context=context, search_result=search_result
         )
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/login", methods=["GET", "POST"])
 def login():
     """ Rota de login """
     if current_user.is_authenticated:
-        return redirect(url_for('login'))
+        return redirect(url_for('car_list'))
 
     if request.method == 'POST':
         email = request.form.get('email')
@@ -126,6 +91,7 @@ def login():
 @login_required
 def logout():
     """Rota de logout"""
+
     sucesso, mensagem = AuthController.fazer_logout()
     flash(mensagem, 'info')
     return redirect(url_for('login'))
@@ -140,32 +106,35 @@ def registration():
 
     if request.method == "POST":
 
-        name = request.form["name"]
-        email = request.form["email"]
-        phone = request.form["phone"]
-        birth_date = datetime.strptime(request.form["birth_date"], '%Y-%m-%d').date()
-        password = request.form["password"]
-        re_pass = request.form["re_pass"]
+        # 1. Extrair e processar os dados do formulário em um Dicionário
+        dados_usuario = {
+            "name": request.form["name"].title(),  # Aplica title() logo na extração
+            "email": request.form["email"].lower(),  # Aplica lower() logo na extração
+            "phone": request.form["phone"],
+            # Converte a string de data para objeto date()
+            "birth_date": datetime.strptime(request.form["birth_date"], '%Y-%m-%d').date(),
+            "city": request.form["cidade"].title(),
+            "postal_code": request.form["codigo_postal"],
+            "genero": request.form["genero"],
+            "password": request.form["password"],
+            "re_pass": request.form["re_pass"],
+        }
 
-        # Criar novo Cliente
-        sucesso, mensagem = AuthController.registrar_usuario(
-            name=name.title(),
-            email=email.lower(),
-            password=password,
-            re_pass=re_pass,
-            phone=phone,
-            birth_date=birth_date,
-        )
+        # 2. Chamar o méthod de registro passando o dicionário (melhor prática, se o AuthController aceitar kwargs)
+        # ATENÇÃO: Se o AuthController só aceitar argumentos nomeados (como no seu código original),
+        # use o desempacotamento de dicionário (**)
+
+        sucesso, mensagem = AuthController.registrar_usuario(**dados_usuario)
 
         if sucesso:
             flash(mensagem, 'success')
             return redirect(url_for('login'))
         else:
             flash(mensagem, 'danger')
-    return render_template("registration.html")
+            return render_template("registration.html", dados=dados_usuario)
 
 
-
+    return render_template("registration.html", dados={})
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/reserva")
 def reserva():

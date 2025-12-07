@@ -3,7 +3,7 @@
 
 ### Luxury Wheels (empresa de aluguer de carros)
 
-Proposta A:
+***Proposta A:***
 Desenvolver um website ondes os clientes deverão executar as seguintes funcionalidades:
 1.  Os clientes têm que registar-se e autenticar-se no website.
 2.  Poder efetuar uma pesquisa dos veiculos (carro ou moto) pelo modelo e marca;
@@ -33,20 +33,10 @@ Critérios Técnicos:
     proxima revisão seja inferior do que a actual;
 
 --------------------------------------------------------------
-### commands:  
-* criar/atualizar o requirements.txt
-
-        pip freeze > requirements.txt
-
-* Instala as dependências do requirements.txt
-
-        pip install -r requirements.txt
 
 --------------------------------------------------------------
 
-
-
-Proposta B:
+***Proposta B:***
 Desenvolver uma aplicação para gerir a frota de veículos da empresa e executar as seguintes funcionalidades:
 1.  Manter (registar, alterar, listar, remover) os veículos, clientes, reservas e formas de pagamento.
 2.  Exportar as informações Excel ou CSV dos veiculos, clientes, reservas e formas de pagamento.

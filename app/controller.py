@@ -156,7 +156,7 @@ class ReservaControler():
 class AuthController:
 
     @staticmethod
-    def registrar_usuario(name, email, password, re_pass, phone, birth_date):
+    def registrar_usuario(name, email, password, re_pass, phone, birth_date, city, postal_code, genero):
         """
         Registra um novo usuário no sistema
         Retorna: (sucesso: bool, mensagem: str)
@@ -179,7 +179,7 @@ class AuthController:
 
         # Cria novo usuário
         try:
-            novo_usuario = Cliente(name=name, email=email, pass_hash=password, phone=phone, birth_date=birth_date)
+            novo_usuario = Cliente(name=name, email=email, phone=phone, birth_date=birth_date, city=city, postal_code=postal_code, genero=genero, pass_hash=password)
             novo_usuario.set_password(password)
 
             db.session.add(novo_usuario)

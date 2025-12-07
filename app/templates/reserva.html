@@ -18,6 +18,15 @@
     </div>
 </section>
 <!-- inner-apge-banner end -->
+<!-- Flash mensage renderization start -->
+{% with messages = get_flashed_messages(with_categories=true) %}
+    {% if messages %}
+        {% for category, message in messages %}
+            <div class="alert alert-{{ category }}">{{ message }}</div>
+        {% endfor %}
+    {% endif %}
+{% endwith %}
+<!-- Flash mensage renderization end -->
 <!-- reserva-section start -->
 <section class="reserva-section pt-120 pb-120">
     <div class="container">

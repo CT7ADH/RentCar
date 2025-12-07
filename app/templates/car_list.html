@@ -18,24 +18,25 @@
     </div>
 </section>
 <!-- inner-apge-banner end -->
-<!-- Flash mensage renderization start -->
-{% with messages = get_flashed_messages(with_categories=true) %}
-    {% if messages %}
-        {% for category, message in messages %}
-            <div class="alert alert-{{ category }}">{{ message }}</div>
-        {% endfor %}
-    {% endif %}
-{% endwith %}
-<!-- Flash mensage renderization end -->
+
 <!-- car-search-section start -->
 <section class="car-search-section pt-120 pb-120">
     <div class="container">
         <div class="row">
             <div class="col-lg-12">
+                <!-- Flash mensage renderization start -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }}">{{ message }}</div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+                <!-- Flash mensage renderization end -->
                 <div class="car-search-filter-area">
                     <div class="car-search-filter-form-area">
                         <!-- Inicio do form-->
-                        <form class="car-search-filter-form"action="{{ url_for('car_list') }}" method="post">
+                        <form class="car-search-filter-form" action="{{ url_for('car_list') }}" method="post">
                             <div class="row justify-content-between">
                                 <div class="col-lg-4 col-md-5 col-sm-6">
                                     <div class="cart-sort-field">
