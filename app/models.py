@@ -50,14 +50,18 @@ class Cliente(db.Model, UserMixin):
     __tablename__ = 'clientes'
 
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
+    date_created = db.Column(db.DateTime, default=datetime.utcnow)
     name = db.Column(db.String(100), nullable=False)
     email = db.Column(db.String(120), unique=True, nullable=False)
-    pass_hash = db.Column(db.String(128), nullable=False)
     phone = db.Column(db.String(20), nullable=False)
     birth_date = db.Column(db.Date, nullable=False)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
+    city = db.Column(db.String(50), nullable=False)
+    postal_code = db.Column(db.String(10), nullable=False)
+    genero = db.Column(db.String(50), nullable=False)
+    pass_hash = db.Column(db.String(128), nullable=False)
+
     # Relacionamentos
-    reservas = db.relationship('Reserva', backref='cliente', lazy='dynamic')
+    reservas = db.relationship('Reserva', backref='cliente', lazy=True)
 
 
     def set_password(self, password):
@@ -120,12 +124,12 @@ class Veiculo(db.Model):
             db.session.close()
             return res
 
-    def get_by_id(self):
+    def get_by_id(self, id):
         try:
-            res = db.session.query(Veiculo).filter(Veiculo.id == self.id).first()
+            res = db.session.query(Veiculo).filter(Veiculo.id==id).first()
         except Exception as e:
             res = []
-            print(e)
+            print(f"Erro ao buscar veículo por ID: {e}")
         finally:
             db.session.close()
             return res

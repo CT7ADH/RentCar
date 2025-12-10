@@ -36,19 +36,35 @@
                         <!-- Flash mensage renderization end -->
                         <form class="registration-form" action="{{ url_for('registration') }}" method="post">
                             <div class="form-group">
-                                <input id="name" name="name" placeholder="O seu Nome completo" type="text" required/>
+                                <input id="name" name="name" placeholder="O seu Nome completo" type="text" value="{{ dados.name if dados else '' }}" required/>
                             </div>
                             <div class="frm-group">
-                                <input id="email" name="email" placeholder="O seu E-mail" type="email" required/>
+                                <input id="email" name="email" placeholder="O seu E-mail" type="email" value="{{ dados.email if dados else '' }}" required/>
                             </div>
                             <div class="frm-group">
-                                <input id="phone" name="phone" placeholder="O seu Telefone" type="tel" inputmode="tel" pattern="^\+?\d{6,15}$" required/>
+                                <input id="phone" name="phone" placeholder="O seu Telefone(Ex: 912 345 678)" type="tel"
+                                       inputmode="tel" pattern="^(\+?351[\s\-]?)?(2|3|9|6|7|8)\d{8}$"
+                                       title="O número deve ter 9 dígitos (começando com 2 ou 9, etc.), opcionalmente com +351." value="{{ dados.phone if dados else '' }}" required/>
                             </div>
                             <div class="frm-group">
-                                <input id="birth_date" name="birth_date" placeholder="Data de Nascimento" type="date" required/>
+                                <input id="birth_date" name="birth_date" type="text" placeholder="Data de Nascimento" value="{{ dados.birth_date if dados else '' }}" required onfocus="this.type='date'" onblur="if(!this.value) this.type='text'"/>
+                            </div>
+                            <div class="form-group">
+                                <input id="cidade" name="cidade" placeholder="A sua Cidade" type="text" value="{{ dados.city if dados else '' }}" required/>
+                            </div>
+                            <div class="form-group">
+                                <input id="codigo_postal" name="codigo_postal" placeholder="O seu Codigo Postal" type="text" value="{{ dados.postal_code if dados else '' }}" required/>
+                            </div>
+                            <div class="form-group">
+                                <select class="form-group" id="genero" name="genero" required>
+                                    <option value=" "selected disabled>Selecione o Genero</option>
+                                    <option value="Masculino" {{'selected' if dados and dados.genero == 'Masculino' else '' }}> Masculino</option>
+                                    <option value="Feminino" {{'selected' if dados and dados.genero == 'Feminino' else '' }}> Feminino</option>
+                                    <option value="Outro" {{'selected' if dados and dados.genero == 'Outro' else '' }}> Outro / Não desejo informar</option>
+                                </select>
                             </div>
                             <div class="frm-group">
-                                <input id="password" name="password" placeholder="Sua Password" type="password" required/>
+                                <input id="password" name="password" placeholder="Sua Password" type="password" value="{{ dados.password if dados else '' }}" required/>
                             </div>
                             <div class="frm-group">
                                 <input id="re_pass" name="re_pass" placeholder="Confirme a Password" type="password" required/>

@@ -37,7 +37,7 @@ class VeiculoControler():
     def __init__(self):
         self.veiculo_model = Veiculo()
 
-    def get_veiculos(self, limit):
+    def get_all(self, limit):
         result = []
         try:
             res = self.veiculo_model.get_all(limit=limit)
@@ -63,6 +63,39 @@ class VeiculoControler():
         except Exception as e:
             print(e)
             result = []
+            return False, f'Erro ao obter Veiculos: {str(e)}'
+        finally:
+            return result
+
+    def get_by_id(self, id):
+        result = []
+        try:
+            res = self.veiculo_model.get_by_id(id)
+
+            if res:
+                result={
+                    'id': res.id,
+                    'marca': res.marca,
+                    'modelo': res.modelo,
+                    'categoria': res.categoria,
+                    'transmissao':res.transmissao,
+                    'tipo_veiculo': res.tipo_veiculo,
+                    'capacidade_pessoas': res.capacidade_pessoas,
+                    'valor_diaria' : res.valor_diaria,
+                    'imagem_url' : res.imagem_url,
+                    'cor' : res.cor,
+                    'ano' : res.ano,
+                    'kilometragem': res.kilometragem,
+                    'ativo' : res.ativo
+
+                }
+
+
+
+        except Exception as e:
+            print(e)
+            result = []
+            return False, f'Erro ao obter Veiculo por ID: {str(e)}'
         finally:
             return result
 
@@ -81,8 +114,9 @@ class VeiculoControler():
         try:
             search_type = self.veiculo_model.get_search_type(arg_search)
         except Exception as e:
-            print(f"Erro ao buscar categorias: {e}")
+            print(f"Erro ao buscar categorias: {str(e)}")
             search_type = []
+            return False, f'Erro ao buscar: {str(e)}'
         finally:
             return search_type
 
@@ -109,8 +143,9 @@ class VeiculoControler():
                     'ativo': v.ativo
                 })
         except Exception as e:
-            print(f"Erro ao buscar veículos filtrados: {e}")
+            print(f"Erro ao buscar veículos filtrados: {str(e)}")
             result = []
+            return False, f'Erro ao filtrar veiculos: {str(e)}'
         finally:
             return result
 
@@ -156,7 +191,7 @@ class ReservaControler():
 class AuthController:
 
     @staticmethod
-    def registrar_usuario(name, email, password, re_pass, phone, birth_date):
+    def registrar_usuario(name, email, password, re_pass, phone, birth_date, city, postal_code, genero):
         """
         Registra um novo usuário no sistema
         Retorna: (sucesso: bool, mensagem: str)
@@ -179,7 +214,7 @@ class AuthController:
 
         # Cria novo usuário
         try:
-            novo_usuario = Cliente(name=name, email=email, pass_hash=password, phone=phone, birth_date=birth_date)
+            novo_usuario = Cliente(name=name, email=email, phone=phone, birth_date=birth_date, city=city, postal_code=postal_code, genero=genero, pass_hash=password)
             novo_usuario.set_password(password)
 
             db.session.add(novo_usuario)

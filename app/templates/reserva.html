@@ -2,7 +2,7 @@
 
 {% block content %}
 <!-- inner-apge-banner start -->
-<section class="inner-page-banner bg_img overlay-3" data-background="static/images/inner-page-bg.jpg">
+<section class="inner-page-banner bg_img overlay-3" data-background="{{ url_for('static', filename='images/inner-page-bg.jpg') }}">
     <div class="container">
         <div class="row">
             <div class="col-md-12">
@@ -22,119 +22,129 @@
 <section class="reserva-section pt-120 pb-120">
     <div class="container">
         <div class="row">
+            <!-- Flash mensage renderization start -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <!-- Flash mensage renderization end -->
             <div class="col-lg-8">
                 <div class="reserva-details-area">
                     <div class="thumb">
-                        <img alt="images" src="static/images/cars/b1.jpg"/>
+                        <img alt="images" src="{{ url_for('static', filename='images/cars/' + context.car.imagem_url) }}"/>
                     </div>
                     <div class="content">
                         <div class="content-block">
-                            <h3 class="car-name">fouester subar</h3>
-                            <span class="price">Start foum $20 per day</span>
-                            <p>Louem ipsum dolou sit amet, urna sit sociis lacus sem turpis magna, montes euismod eros
-                                nu dignsim etiam elementum sed tellus sed. Sollicitudin occaecati ut bibendum vitae
-                                vehicula adipiscing, partent justo laboue, maecenas at aliquam eum. Eleifend suspendisse
-                                enim integer, ipsum mauris curabitur nulla ut sit, pede aenean, lacus sed. Dignissim
-                                wisi turpis pharetra sapien.</p>
+                            <h3 class="car-name">{{context.car.marca}} {{context.car.modelo}}</h3>
+                            <span class="price"><strong>Desde {{context.car.valor_diaria}} € por dia!</strong></span>
+                            <p>Este {{context.car.marca}} {{context.car.modelo}} é um(a) {{context.car.tipo_veiculo}} de cor {{context.car.cor}} do ano {{context.car.ano}},
+                                atualmente com {{context.car.kilometragem}}Km e capacidade para {{context.car.capacidade_pessoas}} pessoas.
+                                Pertence a categoria {{context.car.categoria}}, com transmissão {{context.car.transmissao}}, uma excelente escolha para a sua reserva,
+                                 podendo ser adicionado os seguintes serviços:</p>
+
+                            </p>
                         </div>
-                        <foum class="reserva-foum">
+                        <form class="reserva-form">
                             <div class="content-block">
                                 <h3 class="title">benefícios e taxas extra</h3>
                                 <div class="row">
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck1" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck1">televisão $05 per
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck1" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck1">televisão $05 per
                                                 day</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck2" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck2">cadeira de
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck2" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck2">cadeira de
                                                 criança</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck3" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck3">backfast &amp; lunch $20
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck3" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck3">backfast &amp; lunch $20
                                                 per day</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck4" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck4">seguros do carro</label>
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck4" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck4">seguros do carro</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck5" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck5">ar condicionado $35 per
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck5" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck5">ar condicionado $35 per
                                                 day</label>
                                         </div>
                                     </div>
                                     <div class="col-lg-6">
-                                        <div class="foum-group foum-check">
-                                            <input class="foum-check-input" id="exampleCheck6" type="checkbox"/>
-                                            <label class="foum-check-label" fou="exampleCheck6">security &amp;
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck6" type="checkbox"/>
+                                            <label class="form-check-label" fou="exampleCheck6">security &amp;
                                                 safety</label>
                                         </div>
                                     </div>
                                 </div>
                                 <div class="row">
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-map-marker"></i>
-                                        <input class="foum-control has-icon" placeholder="Local de levantamento"
+                                        <input class="form-control has-icon" placeholder="Local de levantamento"
                                                type="text"/>
                                     </div>
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-map-marker"></i>
-                                        <input class="foum-control has-icon" placeholder="Local de entrega"
+                                        <input class="form-control has-icon" placeholder="Local de entrega"
                                                type="text"/>
                                     </div>
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-calendar"></i>
-                                        <input class="foum-control has-icon datepicker-here" data-language="en"
+                                        <input class="form-control has-icon datepicker-here" data-language="en"
                                                placeholder="Data de levantamento" type="text"/>
                                     </div>
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-clock-o"></i>
-                                        <input class="foum-control has-icon timepicker" name="timepicker"
+                                        <input class="form-control has-icon timepicker" name="timepicker"
                                                placeholder="Hora de levantamento" type="text"/>
                                     </div>
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-calendar"></i>
-                                        <input class="foum-control has-icon datepicker-here" data-language="en"
+                                        <input class="form-control has-icon datepicker-here" data-language="en"
                                                placeholder="Data de entrega" type="text"/>
                                     </div>
-                                    <div class="foum-group col-md-6">
+                                    <div class="form-group col-md-6">
                                         <i class="fa fa-clock-o"></i>
-                                        <input class="foum-control has-icon timepicker" name="timepicker"
+                                        <input class="form-control has-icon timepicker" name="timepicker"
                                                placeholder="Hora de entrega" type="text"/>
                                     </div>
                                 </div>
                             </div>
                             <div class="content-block">
-                                <h3 class="title">personal infoumation</h3>
+                                <h3 class="title">Informação pessoal</h3>
                                 <div class="row">
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <input placeholder="Nome" type="text"/>
                                     </div>
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <input placeholder="Endereço de email" type="email"/>
                                     </div>
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <input placeholder="Telefone" type="tel"/>
                                     </div>
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <input placeholder="Cidade" type="text"/>
                                     </div>
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <input placeholder="Código Postal" type="text"/>
                                     </div>
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <select>
                                             <option>Género</option>
                                             <option>Masculino</option>
@@ -144,9 +154,9 @@
                                 </div>
                             </div>
                             <div class="content-block">
-                                <h3 class="title">método de pagamento</h3>
+                                <h3 class="title">Método de pagamento</h3>
                                 <div class="row">
-                                    <div class="col-lg-6 foum-group">
+                                    <div class="col-lg-6 form-group">
                                         <select>
                                             <option>Selecionar método de pagamento</option>
                                             <option>Paypal</option>
@@ -157,10 +167,10 @@
                                 </div>
                             </div>
                             <div class="content-block">
-                                <h3 class="title">addisonal infoumation</h3>
+                                <h3 class="title">Informação Adicional</h3>
                                 <div class="row">
-                                    <div class="col-lg-12 foum-group">
-                                        <textarea placeholder="Write addisonal infoumation in here"></textarea>
+                                    <div class="col-lg-12 form-group">
+                                        <textarea placeholder="Escreva aqui, informação adicional"></textarea>
                                     </div>
                                     <div class="col-lg-12">
                                         <button class="cmn-btn bg-black" type="reset">Cancelar</button>
@@ -168,7 +178,7 @@
                                     </div>
                                 </div>
                             </div>
-                        </foum>
+                        </form>
                     </div>
                 </div>
             </div>
@@ -190,8 +200,7 @@
                             <div class="testemunho-slider owl-carousel">
                                 <div class="testemunho-item">
                                     <div class="testemunho-item--header">
-                                        <div class="thumb"><img alt="image"
-                                                                src="static/images/testemunho/1.jpg"/></div>
+                                        <div class="thumb"><img alt="image" src="{{ url_for('static', filename='images/testemunho/1.jpg') }}"/></div>
                                         <div class="content">
                                             <h6 class="name">martin hook</h6>
                                             <span class="designation">empresário</span>
