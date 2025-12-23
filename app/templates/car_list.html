@@ -40,7 +40,7 @@
                             <div class="row justify-content-between">
                                 <div class="col-lg-4 col-md-5 col-sm-6">
                                     <div class="cart-sort-field">
-                                        <span class="caption">Ordenar por : </span>
+                                        <span class="caption">Filtrar por : </span>
                                         <select name="ordenar" id="ordenar" onchange="this.form.submit()">
                                             <option value="None" {% if not ordenar or ordenar == 'None' %}selected{% endif %}>Todos os Veículos</option>
                                             <option value="marca" {% if ordenar == 'marca' %}selected{% endif %}>Marca</option>
@@ -54,15 +54,15 @@
                                     </div>
                                 </div>
                                 <div class="col-lg-7 col-md-7 col-sm-6 d-flex">
-                                    <select name="filtro_valor" id="filtro_valor" {% if not search_result %}disabled{% endif %}>
+                                    <select name="filtro_valor" id="filtro_valor" {% if not context.search_result %}disabled{% endif %}>
                                         <option value="">
-                                            {% if search_result %}
+                                            {% if context.search_result %}
                                                 Selecione para filtrar
                                             {% else %}
-                                                Primeiro selecione "Ordenar por"
+                                                Primeiro selecione "Filtrar por"
                                             {% endif %}
                                         </option>
-                                        {% for item in search_result %}
+                                        {% for item in context.search_result %}
                                         <option value="{{ item }}" {% if filtro_selecionado == item %}selected{% endif %}>
                                             {{ item }}
                                         </option>
@@ -84,7 +84,7 @@
             <div class="col-lg-8">
                 <div class="car-search-result-area grid--view row mb-none-30">
                     {% if context %}
-                        {% for veiculo in context %}
+                        {% for veiculo in context.veiculos %}
                         <div class="col-md-6 col-12">
                             <div class="car-item">
                                 <div class="thumb bg_img" data-background="{{ url_for('static', filename='images/cars/' + veiculo.imagem_url) if veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"></div>
@@ -135,8 +135,8 @@
                                     <div class="col-lg-12 form-group">
                                         <select name="veiculo_id" required>
                                             <option value="">Escolha o Tipo de Carro</option>
-                                            {% for veiculo in context %}
-                                            <option value="{{ veiculo.id }}">{{ veiculo.categoria }}</option>
+                                            {% for cat in context.categories %}
+                                            <option value="{{ cat }}">{{ cat }}</option>
                                             {% endfor %}
                                         </select>
                                     </div>
