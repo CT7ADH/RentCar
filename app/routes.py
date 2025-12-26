@@ -12,11 +12,11 @@ from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_
 from app.controller import ClienteControler, VeiculoControler, ReservaControler, AuthController, PayMethodControler
 
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Página Inicial ---------------------------------------- '''
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def root():
-    """ Página Inicial """
+
     if current_user.is_authenticated:
         return redirect(url_for('root'))
 
@@ -34,11 +34,11 @@ def root():
         }
         return render_template("index.html", context=context)
 
-''' -------------------------------------------------------------------------------------------------- '''
 
+''' ---------------------------------------- Listagem de veículos com filtros ---------------------------------------- '''
 @app.route("/car_list", methods=["GET", "POST"])
 def car_list():
-    """ Listagem de veículos com filtros """
+
     if request.method == 'POST':
         search_type = request.form.get("ordenar")
         filtro_valor = request.form.get("filtro_valor")
@@ -69,10 +69,12 @@ def car_list():
         search_result = []
         return render_template("car_list.html", context=context, search_result=search_result
         )
-''' -------------------------------------------------------------------------------------------------- '''
+
+
+''' ---------------------------------------- Rota de login ---------------------------------------- '''
 @app.route("/login", methods=["GET", "POST"])
 def login():
-    """ Rota de login """
+
     if current_user.is_authenticated:
         return redirect(url_for('car_list'))
 
@@ -95,21 +97,19 @@ def login():
     return render_template('login.html', context={})
 
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Rota de logout ---------------------------------------- '''
 @app.route("/logout")
 @login_required
 def logout():
-    """Rota de logout"""
 
     sucesso, mensagem = AuthController.fazer_logout()
     flash(mensagem, 'info')
     return redirect(url_for('login'))
 
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Registro de novos clientes ---------------------------------------- '''
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
-    """ Registro de novos clientes """
     # if current_user.is_authenticated:
     #     return redirect(url_for('registration'))
 
@@ -145,13 +145,13 @@ def registration():
 
     return render_template("registration.html", dados={})
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- ??¿¿ nova reserva ---------------------------------------- '''
 @app.route("/reserva")
 def reserva():
 
     return render_template("reserva.html")
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Cria nova reserva recebendo ID do veiculo ---------------------------------------- '''
 @app.route("/reserva/<int:id>")
 def cria_reserva(id):
 
@@ -166,7 +166,7 @@ def cria_reserva(id):
 
 
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Rota de contacto ---------------------------------------- '''
 @app.route("/contact")
 def contact():
     """Página de contato"""
@@ -174,7 +174,7 @@ def contact():
 
 
 
-''' -------------------------------------------------------------------------------------------------- '''
+''' ---------------------------------------- Rota para administração de veiculos ---------------------------------------- '''
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
     """Administração de veículos"""
