@@ -9,11 +9,8 @@ from flask_login import login_required, current_user
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
 # 3. Importações dos Controllers
-from app.controller.Cliente import ClienteControler
-from app.controller.Veiculo import VeiculoControler
-from app.controller.Reserva import ReservaControler
-from app.controller.PayMethod import PayMethodControler
-from app.controller.Auth import AuthController
+from app.controller import ClienteControler, VeiculoControler, ReservaControler, AuthController, PayMethodControler
+
 
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/")
@@ -225,4 +222,3 @@ def admin():
 # def dashboard():
 #     """Dashboard do usuário (rota protegida)"""
 #     return render_template('dashboard.html', usuario=current_user)
-º
