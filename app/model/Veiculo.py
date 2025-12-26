@@ -1,81 +1,6 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime, date, timedelta
-from flask_login import UserMixin
-from app import db, bcrypt, login_manager
-from flask_migrate import check
-
-''' -------------------------------------------------------------------------------------------------- '''
-"""
-1.> Uma vez criadas todas as tabelas da base de dados temos que rodar o comando:
-        flask db init
-este comando só se roda uma vez para iniciar a cnfiguração do 'migrate'.
-
-2.> Para fazer o migrate despois de qualquer alteração: 
-        flask db migrate -m "[mensagem migrate]"
-        
-3.> Para salvar o commit no banco de Dados:
-        flask db upgrade
-        
------------------------------------------------------------------------------------------ """
-''' Função para recuperar o usuario para sessão desde Cliente'''
-@login_manager.user_loader
-def load_user(user_id):
-    return Cliente.query.get(user_id)
-
-''' Classe FormasPagamento para inserir as forma de pagamento'''
-class PayMethod(db.Model):        # MB, MBway, CCredito,
-    __tablename__ = 'formas_pagamento'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    nome = db.Column(db.String(50), nullable=False, unique=True)
-    ativo = db.Column(db.Boolean, default=True)
-    # Relacionamentos
-    reservas = db.relationship('Reserva', backref='formas_pagamento', lazy='dynamic')
-
-    def __repr__(self):
-        return self.nome
-
-    def to_dict(self):
-        if self.ativo == True:
-            return {
-                "id": self.id,
-                "name": self.nome
-            }
-
-
-
-
-''' Classe Cliente para registar os clientes'''
-class Cliente(db.Model, UserMixin):
-    __tablename__ = 'clientes'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    date_created = db.Column(db.DateTime, default=datetime.utcnow)
-    name = db.Column(db.String(100), nullable=False)
-    email = db.Column(db.String(120), unique=True, nullable=False)
-    phone = db.Column(db.String(20), nullable=False)
-    birth_date = db.Column(db.Date, nullable=False)
-    city = db.Column(db.String(50), nullable=False)
-    postal_code = db.Column(db.String(10), nullable=False)
-    genero = db.Column(db.String(50), nullable=False)
-    pass_hash = db.Column(db.String(128), nullable=False)
-
-    # Relacionamentos
-    reservas = db.relationship('Reserva', backref='cliente', lazy=True)
-
-
-    def set_password(self, password):
-        """Define a Password do usuário (criptografada)"""
-        self.pass_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
-
-    def check_password(self, password):
-        """Verifica se a Password está correta"""
-        return bcrypt.check_password_hash(self.pass_hash, password)
-
-    def __repr__(self):
-        return f'<Usuario {self.name}'
-
-
+from datetime import datetime
+from app import db
 
 ''' Classe Veiculo para registar os Veiculos e seus dados'''
 class Veiculo(db.Model):
@@ -215,21 +140,3 @@ class Veiculo(db.Model):
 
 
 
-
-''' Classe Reserva para registar as Reservas'''
-class Reserva(db.Model):
-    __tablename__ = 'reservas'
-
-    id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
-    veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'), nullable=False)
-    forma_pagamento_id = db.Column(db.Integer, db.ForeignKey('formas_pagamento.id'), nullable=False)
-
-    data_inicio = db.Column(db.Date, nullable=False)
-    data_fim = db.Column(db.Date, nullable=False)
-    valor_total = db.Column(db.Numeric(10, 2), nullable=False)
-    status = db.Column(db.String(20), default='confirmada')  # confirmada, ativa, finalizada, cancelada
-
-    data_reserva = db.Column(db.DateTime, default=datetime.utcnow)
-    data_cancelamento = db.Column(db.DateTime, nullable=True)
-    motivo_cancelamento = db.Column(db.Text, nullable=True)

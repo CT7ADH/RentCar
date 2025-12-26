@@ -1,11 +1,19 @@
 # -*- coding: utf-8 -*-
+# 1. Importações do Flask e Python
 from app import app, db
 from flask import render_template, url_for, request, redirect, flash, session
 from datetime import datetime, date
-from app.controller import PayMethodControler, ClienteControler, VeiculoControler, ReservaControler, AuthController
-from flask_login import login_user, logout_user, login_required, current_user
+from flask_login import login_required, current_user
 
+# 2. Importação do Admin
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
+
+# 3. Importações dos Controllers
+from app.controller.Cliente import ClienteControler
+from app.controller.Veiculo import VeiculoControler
+from app.controller.Reserva import ReservaControler
+from app.controller.PayMethod import PayMethodControler
+from app.controller.Auth import AuthController
 
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/")
@@ -217,3 +225,4 @@ def admin():
 # def dashboard():
 #     """Dashboard do usuário (rota protegida)"""
 #     return render_template('dashboard.html', usuario=current_user)
+º

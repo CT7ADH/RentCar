@@ -21,4 +21,4 @@ bcrypt = Bcrypt(app)
 
 # Importa-se sempre no final do ficheiro
 from app import routes
-from app.models import Cliente, Veiculo, Reserva, PayMethod
+from app import model  # Isto carrega tudo o que está defenido no __init__ da pasta model

@@ -19,7 +19,7 @@ def validar_campos_obrigatorios(marca, modelo, matricula):
 
 def validar_matricula_existe(matricula):
     """Verifica se a matrícula já existe no banco"""
-    from app.models import Veiculo
+    from tests.migrate import Veiculo
 
     if Veiculo.query.filter_by(matricula=matricula.upper()).first():
         return False, 'Esta matrícula já está cadastrada!'
@@ -144,7 +144,7 @@ def validar_todos_dados(dados):
 
 def criar_veiculo_no_banco(dados, imagem_url, db):
     """Cria o veículo no banco de dados"""
-    from app.models import Veiculo
+    from tests.migrate import Veiculo
 
     veiculo = Veiculo(
         marca=dados['marca'],
