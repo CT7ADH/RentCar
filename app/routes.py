@@ -46,30 +46,24 @@ def car_list():
 
         # Se houver um valor de filtro específico, filtrar os veículos
         if filtro_valor and filtro_valor != "":
-            veiculos = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
+            context = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
         else:
             # Se só selecionou o tipo mas não o valor, mostrar todos
-            veiculos = VeiculoControler().get_all(limit=None)
-        context={
-            'veiculos': veiculos,
-            'search_result': search_result,
-            'ordenar' : search_type,
-            'filtro_selecionado' : filtro_valor,
-            'categories': VeiculoControler().get_used_categorias(),
-        }
+            context = VeiculoControler().get_all(limit=None)
 
         return render_template(
-            "car_list.html", context=context)
+            "car_list.html",
+            context=context,
+            search_result=search_result,
+            ordenar=search_type,
+            filtro_selecionado=filtro_valor
+        )
     else:
         # GET - mostra todos os veículos
-        veiculos = VeiculoControler().get_all(limit=None)
+        context = VeiculoControler().get_all(limit=None)
         search_result = []
-        context = {
-            'veiculos': veiculos,
-            'categories': VeiculoControler().get_used_categorias(),
-            'search_result': search_result
-        }
-        return render_template("car_list.html", context=context)
+        return render_template("car_list.html", context=context, search_result=search_result
+        )
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/login", methods=["GET", "POST"])
 def login():
@@ -149,9 +143,8 @@ def registration():
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/reserva")
 def reserva():
-    flash('Tem que escolher primeiro uma viatura para prosseguir com a reserva', 'danger')
-    return redirect(url_for('car_list'))
-    #return render_template("car_list.html")
+
+    return render_template("reserva.html")
 
 ''' -------------------------------------------------------------------------------------------------- '''
 @app.route("/reserva/<int:id>")
