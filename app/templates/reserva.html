@@ -9,7 +9,7 @@
                 <h2 class="page-title">reserva</h2>
                 <ol class="page-list">
                     <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
-                    <li><a href="#0">car list</a></li>
+                    <li><a href="{{ url_for('car_list')}}">car list</a></li>
                     <li>reserva</li>
                     <li><a href="{{ url_for('logout')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a></li>
                 </ol>
@@ -44,10 +44,7 @@
                                 atualmente com {{context.car.kilometragem}}Km e capacidade para {{context.car.capacidade_pessoas}} pessoas.
                                 Pertence a categoria {{context.car.categoria}}, com transmissão {{context.car.transmissao}}, uma excelente escolha para a sua reserva,
                                  podendo ser adicionado os seguintes serviços:</p>
-
-                            </p>
                         </div>
-                        <  class="reserva-form">
                             <div class="content-block">
                                 <h3 class="title">benefícios e taxas extra</h3>
                                 <div class="row">

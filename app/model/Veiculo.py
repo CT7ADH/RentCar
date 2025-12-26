@@ -58,7 +58,7 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
             return res
-
+    '''
     def get_search_type(self, arg_search):
         try:
             if arg_search is None or arg_search == "None":
@@ -88,6 +88,40 @@ class Veiculo(db.Model):
             db.session.close()
             # Converte lista de tuplas em lista simples
             return [indice[0] for indice in res] if res and not isinstance(res[0], Veiculo) else res
+    '''
+
+
+    def get_search_type(self, arg_search):
+        try:
+            # Colunas permitidas para busca (White List por segurança)
+            colunas_validas = [
+                "marca", "modelo", "categoria", "transmissao",
+                "tipo_veiculo", "valor_diaria", "capacidade_pessoas"
+            ]
+
+            if arg_search in colunas_validas:
+                # Obtém dinamicamente o atributo da classe Veiculo
+                coluna = getattr(Veiculo, arg_search)
+
+                res = db.session.query(coluna) \
+                    .filter(Veiculo.ativo == True) \
+                    .distinct() \
+                    .order_by(coluna) \
+                    .all()
+            else:
+                # Caso padrão: retorna todos os objetos Veiculo
+                res = db.session.query(Veiculo).all()
+
+        except Exception as e:
+            res = []
+            print(f"Erro na busca: {e}")
+        finally:
+            db.session.close()
+
+            # Lógica de conversão simplificada
+            if res and not isinstance(res[0], Veiculo):
+                return [indice[0] for indice in res]
+            return res
 
     def get_veiculos_by_filter(self, tipo_filtro, valor_filtro):
         """Busca veículos baseado no filtro selecionado"""

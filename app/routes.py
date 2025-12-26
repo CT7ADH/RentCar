@@ -51,24 +51,29 @@ def car_list():
 
         # Se houver um valor de filtro específico, filtrar os veículos
         if filtro_valor and filtro_valor != "":
-            context = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
+            veiculos_filtrados = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
         else:
             # Se só selecionou o tipo mas não o valor, mostrar todos
-            context = VeiculoControler().get_all(limit=None)
+            veiculos_filtrados = VeiculoControler().get_all(limit=None)
+
+        context = {
+            'veiculos' : veiculos_filtrados,
+            'search_result' : search_result,
+            'ordenar' : search_type,
+            'filtro_selecionado' : filtro_valor
+        }
 
         return render_template(
-            "car_list.html",
-            context=context,
-            search_result=search_result,
-            ordenar=search_type,
-            filtro_selecionado=filtro_valor
-        )
+            "car_list.html", context=context)
     else:
         # GET - mostra todos os veículos
-        context = VeiculoControler().get_all(limit=None)
+        veiculos = VeiculoControler().get_all(limit=None)
         search_result = []
-        return render_template("car_list.html", context=context, search_result=search_result
-        )
+        context = {
+            'veiculos' : veiculos,
+            'search_result' : search_result
+        }
+        return render_template("car_list.html", context=context)
 
 
 ''' ---------------------------------------- Rota de login ---------------------------------------- '''
@@ -166,18 +171,17 @@ def cria_reserva(id):
 
 
 
-''' ---------------------------------------- Rota de contacto ---------------------------------------- '''
+''' ---------------------------------------- Página de contato ---------------------------------------- '''
 @app.route("/contact")
 def contact():
-    """Página de contato"""
+
     return render_template("contact.html")
 
 
 
-''' ---------------------------------------- Rota para administração de veiculos ---------------------------------------- '''
+''' ---------------------------------------- Administração de veículos ---------------------------------------- '''
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
-    """Administração de veículos"""
 
     if request.method == "POST":
         try:

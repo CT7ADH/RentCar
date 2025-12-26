@@ -42,14 +42,14 @@
                                     <div class="cart-sort-field">
                                         <span class="caption">Filtrar por : </span>
                                         <select name="ordenar" id="ordenar" onchange="this.form.submit()">
-                                            <option value="None" {% if not ordenar or ordenar == 'None' %}selected{% endif %}>Todos os Veículos</option>
-                                            <option value="marca" {% if ordenar == 'marca' %}selected{% endif %}>Marca</option>
-                                            <option value="modelo" {% if ordenar == 'modelo' %}selected{% endif %}>Modelo</option>
-                                            <option value="categoria" {% if ordenar == 'categoria' %}selected{% endif %}>Categoria</option>
-                                            <option value="transmissao" {% if ordenar == 'transmissao' %}selected{% endif %}>Transmissão</option>
-                                            <option value="tipo_veiculo" {% if ordenar == 'tipo_veiculo' %}selected{% endif %}>Tipo de Veículo</option>
-                                            <option value="valor_diaria" {% if ordenar == 'valor_diaria' %}selected{% endif %}>Preço</option>
-                                            <option value="capacidade_pessoas" {% if ordenar == 'capacidade_pessoas' %}selected{% endif %}>Nº de Ocupantes</option>
+                                            <option value="None" {% if not context.ordenar or context.ordenar == 'None' %}selected{% endif %}>Todos os Veículos</option>
+                                            <option value="marca" {% if context.ordenar == 'marca' %}selected{% endif %}>Marca</option>
+                                            <option value="modelo" {% if context.ordenar == 'modelo' %}selected{% endif %}>Modelo</option>
+                                            <option value="categoria" {% if context.ordenar == 'categoria' %}selected{% endif %}>Categoria</option>
+                                            <option value="transmissao" {% if context.ordenar == 'transmissao' %}selected{% endif %}>Transmissão</option>
+                                            <option value="tipo_veiculo" {% if context.ordenar == 'tipo_veiculo' %}selected{% endif %}>Tipo de Veículo</option>
+                                            <option value="valor_diaria" {% if context.ordenar == 'valor_diaria' %}selected{% endif %}>Preço</option>
+                                            <option value="capacidade_pessoas" {% if context.ordenar == 'capacidade_pessoas' %}selected{% endif %}>Nº de Ocupantes</option>
                                         </select>
                                     </div>
                                 </div>
@@ -83,7 +83,7 @@
         <div class="row mt-70">
             <div class="col-lg-8">
                 <div class="car-search-result-area grid--view row mb-none-30">
-                    {% if context %}
+                    {% if context.veiculos %}
                         {% for veiculo in context.veiculos %}
                         <div class="col-md-6 col-12">
                             <div class="car-item">
