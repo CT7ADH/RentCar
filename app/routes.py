@@ -16,15 +16,16 @@ from app.controller import ClienteControler, VeiculoControler, ReservaControler,
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
 def root():
-
+    '''
+    Se a data da ultima inspeção for superior a 1 ano da data actual,
+    o veiculo passa a indisponivel
+    '''
     if current_user.is_authenticated:
         return redirect(url_for('root'))
 
     if request.method == 'POST':
         pass
-    else:
-        # Method para controle de datas para disponibilizar veiculo
-
+    else:   # Method GET:> mostra todos os veículos
 
         veiculos = VeiculoControler().get_all(limit=6)
         categories = VeiculoControler().get_used_categorias()
@@ -65,13 +66,15 @@ def car_list():
 
         return render_template(
             "car_list.html", context=context)
-    else:
+    else:   # Method GET:>
         # GET - mostra todos os veículos
         veiculos = VeiculoControler().get_all(limit=None)
         search_result = []
+        categories = VeiculoControler().get_used_categorias()
         context = {
             'veiculos' : veiculos,
-            'search_result' : search_result
+            'search_result' : search_result,
+            'categories': categories,
         }
         return render_template("car_list.html", context=context)
 
@@ -99,14 +102,15 @@ def login():
             flash(mensagem, 'danger')
             return render_template('login.html', context=login_data)
 
-    return render_template('login.html', context={})
+    else:   # Method GET:>
+        return render_template('login.html', context={})
 
 
-''' ---------------------------------------- Rota de logout ---------------------------------------- '''
+''' ---------------------------------------- Logout da sessão de usuário ---------------------------------------- '''
 @app.route("/logout")
 @login_required
 def logout():
-
+    # logout do usuario
     sucesso, mensagem = AuthController.fazer_logout()
     flash(mensagem, 'info')
     return redirect(url_for('login'))
@@ -146,14 +150,20 @@ def registration():
         else:
             flash(mensagem, 'danger')
             return render_template("registration.html", dados=dados_usuario)
+    else:   # Method GET:>
+        return render_template("registration.html", dados={})
 
-
-    return render_template("registration.html", dados={})
-
-''' ---------------------------------------- ??¿¿ nova reserva ---------------------------------------- '''
+''' ---------------------------------------- Reserva sem login ---------------------------------------- '''
 @app.route("/reserva")
 def reserva():
-
+    '''
+    Esta rota aparace quando não há usuario registado
+    '''
+    if current_user.is_authenticated:
+        return redirect(url_for('root'))
+     
+    mensagem = "Sem Login efectuado"
+    flash(mensagem, 'danger')
     return render_template("reserva.html")
 
 ''' ---------------------------------------- Cria nova reserva recebendo ID do veiculo ---------------------------------------- '''
@@ -166,7 +176,7 @@ def cria_reserva(id):
         'car': veiculo,
 
     }
-    return render_template("reserva.html", context=context)
+    return render_template("reserva1.html", context=context)
 
 
 

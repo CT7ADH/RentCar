@@ -119,36 +119,3 @@ class VeiculoControler():
             return False, f'Erro ao filtrar veiculos: {str(e)}'
         finally:
             return result
-
-    def is_disponivel(self, data_inicio=None, data_fim=None):
-        """Verifica se o veículo está disponível"""
-        if not self.ativo:
-            return False
-
-        # Verifica se a inspeção está em dia (não pode ser superior a 1 ano)
-        data_limite_inspecao = self.data_ultima_inspecao + timedelta(days=365)
-        if date.today() > data_limite_inspecao:
-            return False
-
-        # Verifica se não passou da data da próxima revisão
-        if date.today() > self.data_proxima_revisao:
-            return False
-
-        # Se data_inicio e data_fim foram fornecidas, verifica conflitos de reserva
-        if data_inicio and data_fim:
-            reservas_conflitantes = Reserva.query.filter(
-                Reserva.veiculo_id == self.id,
-                Reserva.status.in_(['confirmada', 'ativa']),
-                db.or_(
-                    db.and_(Reserva.data_inicio <= data_inicio, Reserva.data_fim > data_inicio),
-                    db.and_(Reserva.data_inicio < data_fim, Reserva.data_fim >= data_fim),
-                    db.and_(Reserva.data_inicio >= data_inicio, Reserva.data_fim <= data_fim)
-                )
-            ).first()
-
-            if reservas_conflitantes:
-                return False
-
-        return True
-
-

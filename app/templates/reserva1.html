@@ -1,0 +1,220 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- inner-apge-banner start -->
+<section class="inner-page-banner bg_img overlay-3" data-background="{{ url_for('static', filename='images/inner-page-bg.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">reserva</h2>
+                <ol class="page-list">
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="{{ url_for('car_list')}}">car list</a></li>
+                    <li>reserva</li>
+                    <li><a href="{{ url_for('logout')}}"><i class="fa-solid fa-arrow-right-from-bracket"></i>Logout</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inner-apge-banner end -->
+<!-- reserva-section start -->
+<section class="reserva-section pt-120 pb-120">
+    <div class="container">
+        <div class="row">
+            <!-- Flash mensage renderization start -->
+            {% with messages = get_flashed_messages(with_categories=true) %}
+                {% if messages %}
+                    {% for category, message in messages %}
+                        <div class="alert alert-{{ category }}">{{ message }}</div>
+                    {% endfor %}
+                {% endif %}
+            {% endwith %}
+            <!-- Flash mensage renderization end -->
+            <div class="col-lg-8">
+                <div class="reserva-details-area">
+                    <div class="thumb">
+                        <img alt="images" src="{{ url_for('static', filename='images/cars/' + context.car.imagem_url) }}"/>
+                    </div>
+                    <div class="content">
+                        <div class="content-block">
+                            <h3 class="car-name">{{context.car.marca}} {{context.car.modelo}}</h3>
+                            <span class="price"><strong>Desde {{context.car.valor_diaria}} € por dia!</strong></span>
+                            <p>Este {{context.car.marca}} {{context.car.modelo}} é um(a) {{context.car.tipo_veiculo}} de cor {{context.car.cor}} do ano {{context.car.ano}},
+                                atualmente com {{context.car.kilometragem}}Km e capacidade para {{context.car.capacidade_pessoas}} pessoas.
+                                Pertence a categoria {{context.car.categoria}}, com transmissão {{context.car.transmissao}}, uma excelente escolha para a sua reserva,
+                                 podendo ser adicionado os seguintes serviços:</p>
+                        </div>
+                            <div class="content-block">
+                                <h3 class="title">benefícios e taxas extra</h3>
+                                <div class="row">
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck1" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck1">televisão $05 per
+                                                day</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck2" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck2">cadeira de
+                                                criança</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck3" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck3">backfast &amp; lunch $20
+                                                per day</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck4" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck4">seguros do carro</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck5" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck5">ar condicionado $35 per
+                                                day</label>
+                                        </div>
+                                    </div>
+                                    <div class="col-lg-6">
+                                        <div class="form-group form-check">
+                                            <input class="form-check-input" id="exampleCheck6" type="checkbox"/>
+                                            <label class="form-check-label" for="exampleCheck6">security &amp;
+                                                safety</label>
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="row">
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-map-marker"></i>
+                                        <input class="form-control has-icon" placeholder="Local de levantamento"
+                                               type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-map-marker"></i>
+                                        <input class="form-control has-icon" placeholder="Local de entrega"
+                                               type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-calendar"></i>
+                                        <input class="form-control has-icon datepicker-here" data-language="en"
+                                               placeholder="Data de levantamento" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input class="form-control has-icon timepicker" name="timepicker"
+                                               placeholder="Hora de levantamento" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-calendar"></i>
+                                        <input class="form-control has-icon datepicker-here" data-language="en"
+                                               placeholder="Data de entrega" type="text"/>
+                                    </div>
+                                    <div class="form-group col-md-6">
+                                        <i class="fa fa-clock-o"></i>
+                                        <input class="form-control has-icon timepicker" name="timepicker"
+                                               placeholder="Hora de entrega" type="text"/>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-block">
+                                <h3 class="title">Informação pessoal</h3>
+                                <div class="row">
+                                    <div class="col-lg-6 form-group">
+                                        <input placeholder="Nome" type="text"/>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <input placeholder="Endereço de email" type="email"/>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <input placeholder="Telefone" type="tel"/>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <input placeholder="Cidade" type="text"/>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <input placeholder="Código Postal" type="text"/>
+                                    </div>
+                                    <div class="col-lg-6 form-group">
+                                        <select>
+                                            <option>Género</option>
+                                            <option>Masculino</option>
+                                            <option>Feminino</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-block">
+                                <h3 class="title">Método de pagamento</h3>
+                                <div class="row">
+                                    <div class="col-lg-6 form-group">
+                                        <select>
+                                            <option>Selecionar método de pagamento</option>
+                                            <option>Paypal</option>
+                                            <option>Payoneer</option>
+                                            <option>Visa Card</option>
+                                        </select>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="content-block">
+                                <h3 class="title">Informação Adicional</h3>
+                                <div class="row">
+                                    <div class="col-lg-12 form-group">
+                                        <textarea placeholder="Escreva aqui, informação adicional"></textarea>
+                                    </div>
+                                    <div class="col-lg-12">
+                                        <button class="cmn-btn bg-black" type="reset">Cancelar</button>
+                                        <button class="cmn-btn" type="submit">reserva</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-4">
+                <aside class="sidebar">
+                    <div class="widget widget-all-cars">
+                        <h4 class="widget-title">todos os nossos carros</h4>
+                        <ul class="cars-list">
+                            <li><a href="#0">mistubisshi</a></li>
+                            <li><a href="#0">fouester subar</a></li>
+                            <li><a href="#0">subary liberty</a></li>
+                            <li><a href="#0">pajero range</a></li>
+                            <li><a href="#0">volkswagen</a></li>
+                        </ul>
+                    </div>
+                    <div class="widget widget-testemunho">
+                        <h4 class="widget-title">testemunho</h4>
+                        <div class="widget-body">
+                            <div class="testemunho-slider owl-carousel">
+                                <div class="testemunho-item">
+                                    <div class="testemunho-item--header">
+                                        <div class="thumb"><img alt="image" src="{{ url_for('static', filename='images/testemunho/1.jpg') }}"/></div>
+                                        <div class="content">
+                                            <h6 class="name">martin hook</h6>
+                                            <span class="designation">empresário</span>
+                                        </div>
+                                    </div>
+                                    <div class="testemunho-item--body">
+                                        <p>Tristique consequat, louem sed vivamus donec eget, nulla pharetra lacinia
+                                            wisi diamaliquam velit nec.</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div><!-- widget end -->
+                </aside>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- reserva-section end -->
+{% endblock %}

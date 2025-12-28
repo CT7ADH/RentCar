@@ -58,38 +58,6 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
             return res
-    '''
-    def get_search_type(self, arg_search):
-        try:
-            if arg_search is None or arg_search == "None":
-                res = db.session.query(Veiculo).all()
-            elif arg_search == "marca":
-                res = db.session.query(Veiculo.marca).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.marca).all()
-            elif arg_search == "modelo":
-                res = db.session.query(Veiculo.modelo).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.modelo).all()
-            elif arg_search == "categoria":
-                res = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.categoria).all()
-            elif arg_search == "transmissao":
-                res = db.session.query(Veiculo.transmissao).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.transmissao).all()
-            elif arg_search == "tipo_veiculo":
-                res = db.session.query(Veiculo.tipo_veiculo).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.tipo_veiculo).all()
-            elif arg_search == "valor_diaria":
-                res = db.session.query(Veiculo.valor_diaria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.valor_diaria).all()
-                print(res)
-            elif arg_search == "capacidade_pessoas":
-                res = db.session.query(Veiculo.capacidade_pessoas).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.capacidade_pessoas).all()
-            else:
-                res = db.session.query(Veiculo).all()
-
-        except Exception as e:
-            res = []
-            print(f"Erro na busca: {e}")
-        finally:
-            db.session.close()
-            # Converte lista de tuplas em lista simples
-            return [indice[0] for indice in res] if res and not isinstance(res[0], Veiculo) else res
-    '''
-
 
     def get_search_type(self, arg_search):
         try:
@@ -123,37 +91,78 @@ class Veiculo(db.Model):
                 return [indice[0] for indice in res]
             return res
 
+
     def get_veiculos_by_filter(self, tipo_filtro, valor_filtro):
-        """Busca veículos baseado no filtro selecionado"""
+        """Busca veículos baseado no filtro selecionado de forma dinâmica"""
         try:
-            if tipo_filtro == "marca":
-                res = db.session.query(Veiculo).filter(Veiculo.marca == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.marca).all()
+            # 1. Iniciamos a query base (sempre ativos)
+            query = db.session.query(Veiculo).filter(Veiculo.ativo == True)
 
-            elif tipo_filtro == "modelo":
-                res = db.session.query(Veiculo).filter(Veiculo.modelo == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.modelo).all()
+            # 2. Tratamento especial para 'valor_diaria' (que apenas ordena no seu original)
+            if tipo_filtro == "valor_diaria":
+                return query.order_by(Veiculo.valor_diaria <= valor_filtro)
 
-            elif tipo_filtro == "categoria":
-                res = db.session.query(Veiculo).filter(Veiculo.categoria == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.categoria).all()
+            # 3. Filtros que mapeiam diretamente para colunas do modelo
+            # Adicione aqui qualquer novo campo que siga a mesma lógica
+            filtros_validos = [
+                "marca", "modelo", "categoria", "transmissao",
+                "tipo_veiculo", "capacidade_pessoas"
+            ]
 
-            elif tipo_filtro == "transmissao":
-                res = db.session.query(Veiculo).filter(Veiculo.transmissao == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.transmissao).all()
+            if tipo_filtro in filtros_validos:
+                # Pega o atributo da classe Veiculo dinamicamente
+                coluna = getattr(Veiculo, tipo_filtro)
 
-            elif tipo_filtro == "tipo_veiculo":
-                res = db.session.query(Veiculo).filter(Veiculo.tipo_veiculo == valor_filtro,Veiculo.ativo == True).order_by(Veiculo.tipo_veiculo).all()
+                # Conversão de tipo necessária para capacidade
+                valor = int(valor_filtro) if tipo_filtro == "capacidade_pessoas" else valor_filtro
 
-            elif tipo_filtro == "capacidade_pessoas":
-                res = db.session.query(Veiculo).filter(Veiculo.capacidade_pessoas == int(valor_filtro),Veiculo.ativo == True).order_by(Veiculo.capacidade_pessoas).all()
+                # Aplica o filtro e a ordenação dinamicamente
+                query = query.filter(coluna == valor).order_by(coluna)
 
-            elif tipo_filtro == "valor_diaria":
-                # Para valor diária, ordenar por preço
-                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).order_by(Veiculo.valor_diaria).all()
-            else:
-                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).all()
-
-            return res
+            return query.all()
 
         except Exception as e:
             print(f"Erro ao filtrar veículos: {e}")
+            return []
+        finally:
+            db.session.close()
+'''
+    def get_veiculos_avancado(self, **filtros):
+        """
+        Busca veículos com múltiplos filtros simultâneos e faixas de preço.
+        Exemplo de uso: get_veiculos_avancado(marca="Toyota", preco_max=200, transmissao="Automático")
+        """
+        try:
+            # Iniciamos com a query base
+            query = db.session.query(Veiculo).filter(Veiculo.ativo == True)
+
+            # 1. Filtros de Igualdade (Exatos)
+            campos_exatos = ['marca', 'modelo', 'categoria', 'transmissao', 'tipo_veiculo', 'capacidade_pessoas']
+            for campo in campos_exatos:
+                valor = filtros.get(campo)
+                if valor:
+                    # Usa getattr para pegar a coluna dinamicamente
+                    query = query.filter(getattr(Veiculo, campo) == valor)
+
+            # 2. Filtro de Faixa de Preço (Mínimo e Máximo)
+            preco_min = filtros.get('preco_min')
+            preco_max = filtros.get('preco_max')
+
+            if preco_min is not None:
+                query = query.filter(Veiculo.valor_diaria >= float(preco_min))
+
+            if preco_max is not None:
+                query = query.filter(Veiculo.valor_diaria <= float(preco_max))
+
+            # 3. Ordenação (Opcional: vindo nos filtros ou padrão)
+            ordenar_por = filtros.get('ordem', 'valor_diaria')  # Padrão por preço
+            if hasattr(Veiculo, ordenar_por):
+                query = query.order_by(getattr(Veiculo, ordenar_por))
+
+            return query.all()
+
+        except Exception as e:
+            print(f"Erro na filtragem avançada: {e}")
             return []
         finally:
             db.session.close()
@@ -171,6 +180,42 @@ class Veiculo(db.Model):
             return []
         finally:
             db.session.close()
+
+'''
+'''
+    def is_disponivel(self, data_inicio=None, data_fim=None):
+        """Verifica se o veículo está disponível"""
+        if not self.ativo:
+            return False
+
+        # Verifica se a inspeção está em dia (não pode ser superior a 1 ano)
+        data_limite_inspecao = self.data_ultima_inspecao + timedelta(days=365)
+        if date.today() > data_limite_inspecao:
+            return False
+
+        # Verifica se não passou da data da próxima revisão
+        if date.today() > self.data_proxima_revisao:
+            return False
+
+        # Se data_inicio e data_fim foram fornecidas, verifica conflitos de reserva
+        if data_inicio and data_fim:
+            reservas_conflitantes = Reserva.query.filter(
+                Reserva.veiculo_id == self.id,
+                Reserva.status.in_(['confirmada', 'ativa']),
+                db.or_(
+                    db.and_(Reserva.data_inicio <= data_inicio, Reserva.data_fim > data_inicio),
+                    db.and_(Reserva.data_inicio < data_fim, Reserva.data_fim >= data_fim),
+                    db.and_(Reserva.data_inicio >= data_inicio, Reserva.data_fim <= data_fim)
+                )
+            ).first()
+
+            if reservas_conflitantes:
+                return False
+
+        return True
+
+'''
+
 
 
 
