@@ -26,11 +26,12 @@ class Cliente(db.Model, UserMixin):
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='cliente', lazy=True)
 
-
+    ''' ## CREATE ## '''
     def set_password(self, password):
         """Define a Password do usuário (criptografada)"""
         self.pass_hash = bcrypt.generate_password_hash(password.encode('utf-8'))
 
+    ''' ## READ ## '''
     def check_password(self, password):
         """Verifica se a Password está correta"""
         return bcrypt.check_password_hash(self.pass_hash, password)

@@ -17,9 +17,20 @@ from app.controller import ClienteControler, VeiculoControler, ReservaControler,
 @app.route("/index", methods=["GET", "POST"])
 def root():
     '''
-    Se a data da ultima inspeção for superior a 1 ano da data actual,
-    o veiculo passa a indisponivel
+    VERIFICAÇÃO AUTOMÁTICA DE INSPEÇÕES EXPIRADAS
+    Se a data da última inspeção for superior a 1 ano da data atual,
+    o veículo passa a indisponivel
     '''
+    try:
+        quantidade, mensagem = VeiculoControler().check_is_activo()
+
+        # Opcional: registrar em log ou mostrar flash message apenas se houver desativações
+        if quantidade > 0:
+            print(f"⚠️ ATENÇÃO: {mensagem}")
+            flash(mensagem, 'warning')  # Descomente se quiser avisar o usuário
+    except Exception as e:
+        print(f"Erro na verificação automática: {e}")
+
     if current_user.is_authenticated:
         return redirect(url_for('root'))
 
@@ -229,7 +240,12 @@ def admin():
 
     return render_template("admin.html")
 
-
+@app.route("/admin/verificar-inspecoes")
+def verificar_inspecoes_manual():
+    """Rota para testar a verificação manualmente"""
+    quantidade, mensagem = VeiculoControler().check_is_activo()
+    flash(mensagem, 'info')
+    return redirect(url_for('admin'))
 
 # @app.route('/dashboard')
 # @login_required

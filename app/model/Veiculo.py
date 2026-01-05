@@ -1,5 +1,5 @@
 # -*- coding: utf-8 -*-
-from datetime import datetime
+from datetime import datetime, date, timedelta
 from app import db
 
 ''' Classe Veiculo para registar os Veiculos e seus dados'''
@@ -36,7 +36,9 @@ class Veiculo(db.Model):
     #             "categoria": self.categoria
     #         }
 
+    ''' ## READ ## '''
     def get_all(self, limit):
+        '''Devolde todos os Veiculos'''
         try:
             if limit is None:
                 res = db.session.query(Veiculo).all()
@@ -50,6 +52,7 @@ class Veiculo(db.Model):
             return res
 
     def get_by_id(self, id):
+        ''' Devolde o Veículo com ID? '''
         try:
             res = db.session.query(Veiculo).filter(Veiculo.id==id).first()
         except Exception as e:
@@ -60,6 +63,7 @@ class Veiculo(db.Model):
             return res
 
     def get_search_type(self, arg_search):
+        ''' Lista as variáveis para o segundo filtro dinamicamente '''
         try:
             # Colunas permitidas para busca (White List por segurança)
             colunas_validas = [
@@ -71,11 +75,8 @@ class Veiculo(db.Model):
                 # Obtém dinamicamente o atributo da classe Veiculo
                 coluna = getattr(Veiculo, arg_search)
 
-                res = db.session.query(coluna) \
-                    .filter(Veiculo.ativo == True) \
-                    .distinct() \
-                    .order_by(coluna) \
-                    .all()
+                res = db.session.query(coluna).filter(Veiculo.ativo == True).distinct() \
+                    .order_by(coluna).all()
             else:
                 # Caso padrão: retorna todos os objetos Veiculo
                 res = db.session.query(Veiculo).all()
@@ -127,14 +128,13 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
 
-        # Metodo: Buscar categorias únicas de veículos ativos
-
-    @staticmethod
-    def get_categorias_ativas():
-        """Retorna lista de categorias únicas de veículos ativos"""
+    def get_categorias_ativas(self):
+        """
+        Retorna lista de categorias únicas de veículos ativos.
+        """
         try:
-            categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(
-                Veiculo.categoria).all()
+            categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True) \
+                .distinct().order_by(Veiculo.categoria).all()
             # Converte lista de tuplas em lista simples
             return [cat[0] for cat in categorias]
         except Exception as e:
@@ -143,83 +143,48 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
 
-
-'''
-    def get_veiculos_avancado(self, **filtros):
+    ''' ### UPDATE ### '''
+    def check_is_activo(self):
         """
-        Busca veículos com múltiplos filtros simultâneos e faixas de preço.
-        Exemplo de uso: get_veiculos_avancado(marca="Toyota", preco_max=200, transmissao="Automático")
+        Verifica se as inspeções e as revisões estão expiradas.
         """
         try:
-            # Iniciamos com a query base
-            query = db.session.query(Veiculo).filter(Veiculo.ativo == True)
+            hoje = date.today()
+            data_limite_inspecao = hoje - timedelta(days=365)
 
-            # 1. Filtros de Igualdade (Exatos)
-            campos_exatos = ['marca', 'modelo', 'categoria', 'transmissao', 'tipo_veiculo', 'capacidade_pessoas']
-            for campo in campos_exatos:
-                valor = filtros.get(campo)
-                if valor:
-                    # Usa getattr para pegar a coluna dinamicamente
-                    query = query.filter(getattr(Veiculo, campo) == valor)
+            # Busca veículos com problemas
+            veiculos_problematicos = db.session.query(Veiculo).filter(
+                Veiculo.ativo == True,
+                db.or_(
+                    Veiculo.data_ultima_inspecao < data_limite_inspecao,
+                    Veiculo.data_proxima_revisao < hoje
+                )
+            ).all()
 
-            # 2. Filtro de Faixa de Preço (Mínimo e Máximo)
-            preco_min = filtros.get('preco_min')
-            preco_max = filtros.get('preco_max')
+            quantidade = len(veiculos_problematicos)
 
-            if preco_min is not None:
-                query = query.filter(Veiculo.valor_diaria >= float(preco_min))
+            if quantidade > 0:
+                for veiculo in veiculos_problematicos:
+                    veiculo.ativo = False
 
-            if preco_max is not None:
-                query = query.filter(Veiculo.valor_diaria <= float(preco_max))
+                    # Identifica o motivo da desativação
+                    motivo = []
+                    if veiculo.data_ultima_inspecao < data_limite_inspecao:
+                        motivo.append("inspeção expirada")
+                    if veiculo.data_proxima_revisao < hoje:
+                        motivo.append("revisão atrasada")
 
-            # 3. Ordenação (Opcional: vindo nos filtros ou padrão)
-            ordenar_por = filtros.get('ordem', 'valor_diaria')  # Padrão por preço
-            if hasattr(Veiculo, ordenar_por):
-                query = query.order_by(getattr(Veiculo, ordenar_por))
+                    print(
+                        f"Veículo {veiculo.marca} {veiculo.modelo} (ID: {veiculo.id}) desativado - {', '.join(motivo)}")
 
-            return query.all()
+                db.session.commit()
+                return quantidade, f"{quantidade} veículo(s) desativado(s) por manutenção pendente"
+
+            return 0, "Todas as manutenções estão em dia"
 
         except Exception as e:
-            print(f"Erro na filtragem avançada: {e}")
-            return []
+            db.session.rollback()
+            print(f"Erro ao verificar manutenções: {e}")
+            return 0, f"Erro: {str(e)}"
         finally:
             db.session.close()
-
-'''
-'''
-    def is_disponivel(self, data_inicio=None, data_fim=None):
-        """Verifica se o veículo está disponível"""
-        if not self.ativo:
-            return False
-
-        # Verifica se a inspeção está em dia (não pode ser superior a 1 ano)
-        data_limite_inspecao = self.data_ultima_inspecao + timedelta(days=365)
-        if date.today() > data_limite_inspecao:
-            return False
-
-        # Verifica se não passou da data da próxima revisão
-        if date.today() > self.data_proxima_revisao:
-            return False
-
-        # Se data_inicio e data_fim foram fornecidas, verifica conflitos de reserva
-        if data_inicio and data_fim:
-            reservas_conflitantes = Reserva.query.filter(
-                Reserva.veiculo_id == self.id,
-                Reserva.status.in_(['confirmada', 'ativa']),
-                db.or_(
-                    db.and_(Reserva.data_inicio <= data_inicio, Reserva.data_fim > data_inicio),
-                    db.and_(Reserva.data_inicio < data_fim, Reserva.data_fim >= data_fim),
-                    db.and_(Reserva.data_inicio >= data_inicio, Reserva.data_fim <= data_fim)
-                )
-            ).first()
-
-            if reservas_conflitantes:
-                return False
-
-        return True
-
-'''
-
-
-
-

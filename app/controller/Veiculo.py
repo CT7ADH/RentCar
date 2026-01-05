@@ -8,6 +8,17 @@ class VeiculoControler():
     def __init__(self):
         self.veiculo_model = Veiculo()
 
+    def check_is_activo(self):
+        ''' Verificar se os veículos têm as inspeções e revisões em dia'''
+        try:
+            result = self.veiculo_model.check_is_activo()
+        except Exception as e:
+            print(f"Erro ao buscar categorias: {e}")
+            result = []
+        finally:
+            print(result)
+            return result
+
     def get_all(self, limit):
         result = []
         try:
@@ -73,7 +84,7 @@ class VeiculoControler():
     def get_used_categorias(self):
         """Retorna categorias únicas de veículos ativos"""
         try:
-            result = Veiculo.get_categorias_ativas()
+            result = self.veiculo_model.get_categorias_ativas()
         except Exception as e:
             print(f"Erro ao buscar categorias: {e}")
             result = []
