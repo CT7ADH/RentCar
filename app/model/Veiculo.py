@@ -28,13 +28,35 @@ class Veiculo(db.Model):
     # Relacionamentos
     reservas = db.relationship('Reserva', backref='veiculo', lazy=True)
 
-    # # Crias o Dicionario com as categorias
-    # def to_dict(self):
-    #     if self.ativo == True:
-    #         return {
-    #             "id": self.id,
-    #             "categoria": self.categoria
-    #         }
+    def to_dict(self, campos=None):
+        """
+        Converte o objeto Veiculo para dicionário.
+        Returns:
+            dict: Dicionário com os dados do veículo
+        """
+        dados_completos = {
+            'id': self.id,
+            'marca': self.marca,
+            'modelo': self.modelo,
+            'categoria': self.categoria,
+            'transmissao': self.transmissao,
+            'tipo_veiculo': self.tipo_veiculo,
+            'capacidade_pessoas': self.capacidade_pessoas,
+            'valor_diaria': float(self.valor_diaria),  # Converte Decimal para float
+            'imagem_url': self.imagem_url,
+            'cor': self.cor,
+            'ano': self.ano,
+            'kilometragem': self.kilometragem,
+            'ativo': self.ativo,
+            'matricula': self.matricula,
+            'data_cadastro': self.data_cadastro.isoformat() if self.data_cadastro else None
+        }
+
+        # Se foram especificados campos específicos, retorna apenas esses
+        if campos:
+            return {campo: dados_completos[campo] for campo in campos if campo in dados_completos}
+
+        return dados_completos
 
     ''' ## READ ## '''
     def get_all(self, limit):

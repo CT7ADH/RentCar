@@ -19,7 +19,7 @@ def root():
     '''
     VERIFICAÇÃO AUTOMÁTICA DE INSPEÇÕES EXPIRADAS
     Se a data da última inspeção for superior a 1 ano da data atual,
-    o veículo passa a indisponivel
+    o veículo passa a indisponível. Em Produção alterar esta função para rodar uma "task scheduler"
     '''
     try:
         quantidade, mensagem = VeiculoControler().check_is_activo()
@@ -27,10 +27,12 @@ def root():
         # Opcional: registrar em log ou mostrar flash message apenas se houver desativações
         if quantidade > 0:
             print(f"⚠️ ATENÇÃO: {mensagem}")
-            flash(mensagem, 'warning')  # Descomente se quiser avisar o usuário
+            #flash(mensagem, 'warning')  # avisa o usuário
     except Exception as e:
         print(f"Erro na verificação automática: {e}")
-
+    '''
+    Função para quando há user logado
+    '''
     if current_user.is_authenticated:
         return redirect(url_for('root'))
 
