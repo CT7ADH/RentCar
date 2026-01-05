@@ -126,6 +126,24 @@ class Veiculo(db.Model):
             return []
         finally:
             db.session.close()
+
+        # Metodo: Buscar categorias únicas de veículos ativos
+
+    @staticmethod
+    def get_categorias_ativas():
+        """Retorna lista de categorias únicas de veículos ativos"""
+        try:
+            categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(
+                Veiculo.categoria).all()
+            # Converte lista de tuplas em lista simples
+            return [cat[0] for cat in categorias]
+        except Exception as e:
+            print(f"Erro ao buscar categorias: {e}")
+            return []
+        finally:
+            db.session.close()
+
+
 '''
     def get_veiculos_avancado(self, **filtros):
         """
@@ -163,20 +181,6 @@ class Veiculo(db.Model):
 
         except Exception as e:
             print(f"Erro na filtragem avançada: {e}")
-            return []
-        finally:
-            db.session.close()
-
-    # Metodo: Buscar categorias únicas de veículos ativos
-    @staticmethod
-    def get_categorias_ativas():
-        """Retorna lista de categorias únicas de veículos ativos"""
-        try:
-            categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True).distinct().order_by(Veiculo.categoria).all()
-            # Converte lista de tuplas em lista simples
-            return [cat[0] for cat in categorias]
-        except Exception as e:
-            print(f"Erro ao buscar categorias: {e}")
             return []
         finally:
             db.session.close()
