@@ -1,0 +1,195 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- inner-page-banner start -->
+<section class="inner-page-banner bg_img overlay-3" data-background="{{ url_for('static', filename='images/inner-page-bg.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">Minhas Reservas</h2>
+                <ol class="page-list">
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li>Minhas Reservas</li>
+                    <li><a href="{{ url_for('logout')}}"><i class="fa fa-sign-out"></i>Logout</a></li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inner-page-banner end -->
+
+<!-- minhas-reservas-section start -->
+<section class="pt-120 pb-120">
+    <div class="container">
+        <!-- Flash messages -->
+        {% with messages = get_flashed_messages(with_categories=true) %}
+            {% if messages %}
+                {% for category, message in messages %}
+                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                        {{ message }}
+                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                {% endfor %}
+            {% endif %}
+        {% endwith %}
+
+        <!-- Estatísticas -->
+        <div class="row mb-4">
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-primary">{{ context.estatisticas.total_reservas }}</h3>
+                        <p class="mb-0">Total de Reservas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-success">{{ context.estatisticas.reservas_ativas }}</h3>
+                        <p class="mb-0">Reservas Ativas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-info">{{ context.estatisticas.reservas_finalizadas }}</h3>
+                        <p class="mb-0">Finalizadas</p>
+                    </div>
+                </div>
+            </div>
+            <div class="col-lg-3 col-md-6 mb-3">
+                <div class="card text-center">
+                    <div class="card-body">
+                        <h3 class="text-warning">€{{ "%.2f"|format(context.estatisticas.total_gasto) }}</h3>
+                        <p class="mb-0">Total Gasto</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Lista de Reservas -->
+        <div class="row">
+            <div class="col-lg-12">
+                <h3 class="mb-4">Suas Reservas</h3>
+                
+                {% if context.reservas %}
+                    {% for reserva in context.reservas %}
+                    <div class="card mb-3">
+                        <div class="card-body">
+                            <div class="row align-items-center">
+                                <div class="col-md-2">
+                                    <img src="{{ url_for('static', filename='images/cars/' + reserva.veiculo.imagem_url) if reserva.veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}" 
+                                         alt="{{ reserva.veiculo.marca }} {{ reserva.veiculo.modelo }}" 
+                                         class="img-fluid rounded">
+                                </div>
+                                <div class="col-md-5">
+                                    <h5 class="mb-1">{{ reserva.veiculo.marca }} {{ reserva.veiculo.modelo }}</h5>
+                                    <p class="mb-1">
+                                        <i class="fa fa-calendar"></i> 
+                                        <strong>Início:</strong> {{ reserva.data_inicio }} | 
+                                        <strong>Fim:</strong> {{ reserva.data_fim }}
+                                    </p>
+                                    <p class="mb-1">
+                                        <i class="fa fa-credit-card"></i> 
+                                        <strong>Pagamento:</strong> {{ reserva.forma_pagamento }}
+                                    </p>
+                                    <p class="mb-0">
+                                        <i class="fa fa-clock-o"></i> 
+                                        <strong>Reservado em:</strong> {{ reserva.data_reserva }}
+                                    </p>
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    <h4 class="text-primary mb-0">€{{ "%.2f"|format(reserva.valor_total) }}</h4>
+                                    <small class="text-muted">Valor Total</small>
+                                </div>
+                                <div class="col-md-1 text-center">
+                                    {% if reserva.status == 'confirmada' %}
+                                        <span class="badge badge-success badge-pill">Confirmada</span>
+                                    {% elif reserva.status == 'ativa' %}
+                                        <span class="badge badge-primary badge-pill">Ativa</span>
+                                    {% elif reserva.status == 'finalizada' %}
+                                        <span class="badge badge-info badge-pill">Finalizada</span>
+                                    {% elif reserva.status == 'cancelada' %}
+                                        <span class="badge badge-danger badge-pill">Cancelada</span>
+                                    {% endif %}
+                                </div>
+                                <div class="col-md-2 text-center">
+                                    {% if reserva.status in ['confirmada', 'ativa'] %}
+                                        <a href="{{ url_for('editar_reserva', id=reserva.id) }}" 
+                                           class="btn btn-sm btn-warning mb-2 btn-block">
+                                            <i class="fa fa-edit"></i> Editar
+                                        </a>
+                                        <button type="button" 
+                                                class="btn btn-sm btn-danger btn-block" 
+                                                data-toggle="modal" 
+                                                data-target="#cancelModal{{ reserva.id }}">
+                                            <i class="fa fa-times"></i> Cancelar
+                                        </button>
+                                    {% endif %}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <!-- Modal de Cancelamento -->
+                    <div class="modal fade" id="cancelModal{{ reserva.id }}" tabindex="-1" role="dialog" aria-labelledby="cancelModalLabel" aria-hidden="true">
+                        <div class="modal-dialog" role="document">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="cancelModalLabel">Cancelar Reserva</h5>
+                                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                                        <span aria-hidden="true">&times;</span>
+                                    </button>
+                                </div>
+                                <form action="{{ url_for('cancelar_reserva', id=reserva.id) }}" method="post">
+                                    <div class="modal-body">
+                                        <p>Tem certeza que deseja cancelar esta reserva?</p>
+                                        <p><strong>{{ reserva.veiculo.marca }} {{ reserva.veiculo.modelo }}</strong></p>
+                                        <p>Período: {{ reserva.data_inicio }} até {{ reserva.data_fim }}</p>
+                                        
+                                        <div class="form-group">
+                                            <label for="motivo">Motivo do cancelamento (opcional):</label>
+                                            <textarea class="form-control" name="motivo" id="motivo" rows="3" placeholder="Ex: Mudança de planos"></textarea>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Voltar</button>
+                                        <button type="submit" class="btn btn-danger">Confirmar Cancelamento</button>
+                                    </div>
+                                </form>
+                            </div>
+                        </div>
+                    </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="alert alert-info text-center">
+                        <h4><i class="fa fa-info-circle"></i> Você ainda não tem reservas</h4>
+                        <p>Explore nossos veículos e faça sua primeira reserva!</p>
+                        <a href="{{ url_for('car_list') }}" class="cmn-btn mt-3">Ver Veículos Disponíveis</a>
+                    </div>
+                {% endif %}
+            </div>
+        </div>
+    </div>
+</section>
+<!-- minhas-reservas-section end -->
+
+<style>
+    .card {
+        border: 1px solid #ddd;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        transition: all 0.3s;
+    }
+    .card:hover {
+        box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    }
+    .badge-pill {
+        padding: 8px 15px;
+        font-size: 12px;
+    }
+</style>
+{% endblock %}

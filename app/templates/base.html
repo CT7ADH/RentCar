@@ -35,9 +35,10 @@
     <div class="header-bottom">
         <div class="container">
             <nav class="navbar navbar-expand-lg p-0">
-                <a class="site-logo site-title" href="{{ url_for('root')}}"><img alt="site-logo"
-                                                                       src="{{ url_for('static', filename='images/logo2.png') }}"/><span
-                        class="logo-icon"><i class="flaticon-fire"></i></span></a>
+                <a class="site-logo site-title" href="{{ url_for('root')}}">
+                    <img alt="site-logo" src="{{ url_for('static', filename='images/logo2.png') }}"/>
+                    <span class="logo-icon"><i class="flaticon-fire"></i></span>
+                </a>
                 <button aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation"
                         class="navbar-toggler" data-target="#navbarSupportedContent" data-toggle="collapse"
                         type="button">
@@ -45,12 +46,33 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav main-menu m-auto">
-                        <li class=""><a href="{{ url_for('root')}}">Início</a></li>
-                        <li class=""><a href="{{ url_for('car_list')}}">Carros</a></li>
-                        <li><a href="{{ url_for('login')}}">Iniciar sessão</a></li>
-                        <li><a href="{{ url_for('registration')}}">Registar-se</a></li>
-                        <li><a href="{{ url_for('reserva')}}">As minhas reservas</a></li>
-                        <li><a href="{{ url_for('contact')}}">Contacte-nos</a></li>
+                        <li><a href="{{ url_for('root')}}">Início</a></li>
+                        <li><a href="{{ url_for('car_list')}}">Carros</a></li>
+
+                        {% if current_user.is_authenticated %}
+                            <!-- Menu para usuário logado -->
+                            <li><a href="{{ url_for('minhas_reservas')}}">As minhas reservas</a></li>
+                            <li><a href="{{ url_for('contact')}}">Contacte-nos</a></li>
+                            <li class="nav-item dropdown">
+                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                    <i class="fa fa-user"></i> {{ current_user.name }}
+                                </a>
+                                <div class="dropdown-menu" aria-labelledby="userDropdown">
+                                    <a class="dropdown-item" href="{{ url_for('minhas_reservas')}}">
+                                        <i class="fa fa-calendar"></i> Minhas Reservas
+                                    </a>
+                                    <div class="dropdown-divider"></div>
+                                    <a class="dropdown-item" href="{{ url_for('logout')}}">
+                                        <i class="fa fa-sign-out"></i> Logout
+                                    </a>
+                                </div>
+                            </li>
+                        {% else %}
+                            <!-- Menu para usuário não logado -->
+                            <li><a href="{{ url_for('login')}}">Iniciar sessão</a></li>
+                            <li><a href="{{ url_for('registration')}}">Registar-se</a></li>
+                            <li><a href="{{ url_for('contact')}}">Contacte-nos</a></li>
+                        {% endif %}
                     </ul>
                 </div>
             </nav>
@@ -69,8 +91,9 @@
                 <div class="col-lg-4 col-sm-8">
                     <div class="footer-widget widget-about">
                         <div class="widget-about-content">
-                            <a class="footer-logo" href="{{ url_for('root')}}"><img alt="logo"
-                                                                          src="{{ url_for('static', filename='images/logo-footer.png') }}"/></a>
+                            <a class="footer-logo" href="{{ url_for('root')}}">
+                                <img alt="logo" src="{{ url_for('static', filename='images/logo-footer.png') }}"/>
+                            </a>
                             <p>Lorem ipsum dolor sit amet, congue placeranec. Leo faucibus sed eleifend bibendum n
                                 vehicula nulla mauris nulla ipsum neque sed. Gravida egestas fermentum urna, velit
                                 sed. </p>
@@ -107,6 +130,7 @@
     </div>
 </footer>
 <!-- footer-section end -->
+
 <!-- jquery js link -->
 <script src="{{ url_for('static', filename='js/jquery-3.3.1.min.js') }}"></script>
 <!-- jquery migrate js link -->

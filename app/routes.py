@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # 1. Importações do Flask e Python
 from app import app, db
-from flask import render_template, url_for, request, redirect, flash, session
+from flask import render_template, url_for, request, redirect, flash, session, jsonify
 from datetime import datetime, date
 from flask_login import login_required, current_user
 
@@ -33,7 +33,7 @@ def root():
     Função para quando há user logado
     '''
     if current_user.is_authenticated:
-        return redirect(url_for('root'))
+        return redirect(url_for('car_list'))
 
     if request.method == 'POST':
         pass
@@ -161,6 +161,230 @@ def registration():
     else:   # Method GET:>
         return render_template("registration.html", dados={})
 
+''' ---------------------------------------- Minhas Reservas - Lista ---------------------------------------- '''
+@app.route("/minhas-reservas")
+@login_required
+def minhas_reservas():
+    '''
+    Página para visualizar todas as reservas do cliente logado
+    '''
+    try:
+        # Buscar reservas do cliente
+        reservas = ReservaControler().get_reservas_cliente(current_user.id)
+
+        # Buscar estatísticas
+        estatisticas = ReservaControler().get_estatisticas_cliente(current_user.id)
+
+        context = {
+            'reservas': reservas,
+            'estatisticas': estatisticas
+        }
+
+        return render_template("minhas_reservas.html", context=context)
+
+    except Exception as e:
+        print(f"Erro ao carregar reservas: {e}")
+        flash('Erro ao carregar suas reservas. Tente novamente.', 'danger')
+        return redirect(url_for('car_list'))
+
+''' ---------------------------------------- Criar nova reserva - Form ---------------------------------------- '''
+@app.route("/reserva/<int:id>", methods=["GET", "POST"])
+@login_required
+def cria_reserva(id):
+    '''
+    Página para criar uma nova reserva
+    '''
+    if request.method == "POST":
+        try:
+            # Extrair dados do formulário
+            data_inicio_str = request.form.get("data_inicio")
+            data_fim_str = request.form.get("data_fim")
+            forma_pagamento_id = request.form.get("forma_pagamento")
+
+            # Validação básica
+            if not data_inicio_str or not data_fim_str or not forma_pagamento_id:
+                flash('Preencha todos os campos obrigatórios!', 'danger')
+                return redirect(url_for('cria_reserva', id=id))
+
+            # Converter datas
+            data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d').date()
+            data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d').date()
+
+            # Criar reserva
+            sucesso, mensagem, reserva_id = ReservaControler().criar_reserva(
+                cliente_id=current_user.id,
+                veiculo_id=id,
+                forma_pagamento_id=int(forma_pagamento_id),
+                data_inicio=data_inicio,
+                data_fim=data_fim
+            )
+
+            if sucesso:
+                flash(mensagem, 'success')
+                return redirect(url_for('minhas_reservas'))
+            else:
+                flash(mensagem, 'danger')
+                return redirect(url_for('cria_reserva', id=id))
+
+        except ValueError as e:
+            flash('Formato de data inválido!', 'danger')
+            return redirect(url_for('cria_reserva', id=id))
+        except Exception as e:
+            print(f"Erro ao criar reserva: {e}")
+            flash('Erro ao criar reserva. Tente novamente.', 'danger')
+            return redirect(url_for('cria_reserva', id=id))
+
+    # GET - Mostrar formulário
+    veiculo = VeiculoControler().get_by_id(id)
+
+    if not veiculo:
+        flash('Veículo não encontrado!', 'danger')
+        return redirect(url_for('car_list'))
+
+    # Buscar formas de pagamento
+    formas_pagamento = PayMethodControler().get_all_method_pay()
+
+    context = {
+        'car': veiculo,
+        'formas_pagamento': formas_pagamento,
+        'data_hoje': date.today().isoformat()
+    }
+
+    return render_template("reserva1.html", context=context)
+
+''' ---------------------------------------- Editar Reserva ---------------------------------------- '''
+@app.route("/editar-reserva/<int:id>", methods=["GET", "POST"])
+@login_required
+def editar_reserva(id):
+    '''
+    Página para editar uma reserva existente
+    '''
+    if request.method == "POST":
+        try:
+            # Extrair novas datas
+            nova_data_inicio_str = request.form.get("data_inicio")
+            nova_data_fim_str = request.form.get("data_fim")
+
+            if not nova_data_inicio_str or not nova_data_fim_str:
+                flash('Preencha todos os campos!', 'danger')
+                return redirect(url_for('editar_reserva', id=id))
+
+            # Converter datas
+            nova_data_inicio = datetime.strptime(nova_data_inicio_str, '%Y-%m-%d').date()
+            nova_data_fim = datetime.strptime(nova_data_fim_str, '%Y-%m-%d').date()
+
+            # Editar reserva
+            sucesso, mensagem = ReservaControler().editar_reserva(
+                reserva_id=id,
+                cliente_id=current_user.id,
+                nova_data_inicio=nova_data_inicio,
+                nova_data_fim=nova_data_fim
+            )
+
+            if sucesso:
+                flash(mensagem, 'success')
+                return redirect(url_for('minhas_reservas'))
+            else:
+                flash(mensagem, 'danger')
+                return redirect(url_for('editar_reserva', id=id))
+
+        except Exception as e:
+            print(f"Erro ao editar reserva: {e}")
+            flash('Erro ao editar reserva. Tente novamente.', 'danger')
+            return redirect(url_for('editar_reserva', id=id))
+
+    # GET - Mostrar formulário de edição
+    reserva = ReservaControler().get_by_id(id)
+
+    if not reserva:
+        flash('Reserva não encontrada!', 'danger')
+        return redirect(url_for('minhas_reservas'))
+
+    # Verificar se a reserva pertence ao usuário
+    if reserva.cliente_id != current_user.id:
+        flash('Você não tem permissão para editar esta reserva!', 'danger')
+        return redirect(url_for('minhas_reservas'))
+
+    context = {
+        'reserva': reserva,
+        'data_hoje': date.today().isoformat()
+    }
+
+    return render_template("editar_reserva.html", context=context)
+
+''' ---------------------------------------- Cancelar Reserva ---------------------------------------- '''
+@app.route("/cancelar-reserva/<int:id>", methods=["POST"])
+@login_required
+def cancelar_reserva(id):
+    '''
+    Rota para cancelar uma reserva
+    '''
+    try:
+        motivo = request.form.get("motivo", "")
+
+        sucesso, mensagem = ReservaControler().cancelar_reserva(
+            reserva_id=id,
+            cliente_id=current_user.id,
+            motivo=motivo
+        )
+
+        if sucesso:
+            flash(mensagem, 'success')
+        else:
+            flash(mensagem, 'danger')
+
+    except Exception as e:
+        print(f"Erro ao cancelar reserva: {e}")
+        flash('Erro ao cancelar reserva. Tente novamente.', 'danger')
+
+    return redirect(url_for('minhas_reservas'))
+
+''' ---------------------------------------- API - Verificar Disponibilidade ---------------------------------------- '''
+@app.route("/api/verificar-disponibilidade", methods=["POST"])
+@login_required
+def api_verificar_disponibilidade():
+    '''
+    API para verificar disponibilidade de veículo em tempo real (AJAX)
+    '''
+    try:
+        data = request.get_json()
+
+        veiculo_id = data.get('veiculo_id')
+        data_inicio_str = data.get('data_inicio')
+        data_fim_str = data.get('data_fim')
+
+        if not veiculo_id or not data_inicio_str or not data_fim_str:
+            return jsonify({'sucesso': False, 'mensagem': 'Dados incompletos'}), 400
+
+        # Converter datas
+        data_inicio = datetime.strptime(data_inicio_str, '%Y-%m-%d').date()
+        data_fim = datetime.strptime(data_fim_str, '%Y-%m-%d').date()
+
+        # Verificar disponibilidade
+        disponivel, mensagem = ReservaControler().verificar_disponibilidade(
+            veiculo_id, data_inicio, data_fim
+        )
+
+        # Calcular valor se disponível
+        valor_total = 0
+        quantidade_dias = 0
+        if disponivel:
+            valor_total, quantidade_dias, _ = ReservaControler().calcular_valor_total(
+                veiculo_id, data_inicio, data_fim
+            )
+
+        return jsonify({
+            'sucesso': True,
+            'disponivel': disponivel,
+            'mensagem': mensagem,
+            'valor_total': valor_total,
+            'quantidade_dias': quantidade_dias
+        })
+
+    except Exception as e:
+        print(f"Erro na API de disponibilidade: {e}")
+        return jsonify({'sucesso': False, 'mensagem': 'Erro ao verificar disponibilidade'}), 500
+
 ''' ---------------------------------------- Reserva sem login ---------------------------------------- '''
 @app.route("/reserva")
 def reserva():
@@ -168,23 +392,11 @@ def reserva():
     Esta rota aparace quando não há usuario registado
     '''
     if current_user.is_authenticated:
-        return redirect(url_for('root'))
+        return redirect(url_for('minhas_reservas'))
      
     mensagem = "Sem Login efectuado"
     flash(mensagem, 'danger')
     return render_template("reserva.html")
-
-''' ---------------------------------------- Cria nova reserva recebendo ID do veiculo ---------------------------------------- '''
-@app.route("/reserva/<int:id>")
-def cria_reserva(id):
-
-    veiculo = VeiculoControler().get_by_id(id)
-
-    context = {
-        'car': veiculo,
-
-    }
-    return render_template("reserva1.html", context=context)
 
 ''' ---------------------------------------- Página de contato ---------------------------------------- '''
 @app.route("/contact")

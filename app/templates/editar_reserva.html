@@ -1,0 +1,191 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<!-- inner-page-banner start -->
+<section class="inner-page-banner bg_img overlay-3" data-background="{{ url_for('static', filename='images/inner-page-bg.jpg') }}">
+    <div class="container">
+        <div class="row">
+            <div class="col-md-12">
+                <h2 class="page-title">Editar Reserva</h2>
+                <ol class="page-list">
+                    <li><a href="{{ url_for('root')}}"><i class="fa fa-home"></i>Início</a></li>
+                    <li><a href="{{ url_for('minhas_reservas')}}">Minhas Reservas</a></li>
+                    <li>Editar</li>
+                </ol>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- inner-page-banner end -->
+
+<!-- editar-reserva-section start -->
+<section class="pt-120 pb-120">
+    <div class="container">
+        <div class="row justify-content-center">
+            <div class="col-lg-8">
+                <!-- Flash messages -->
+                {% with messages = get_flashed_messages(with_categories=true) %}
+                    {% if messages %}
+                        {% for category, message in messages %}
+                            <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                                {{ message }}
+                                <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+                                    <span aria-hidden="true">&times;</span>
+                                </button>
+                            </div>
+                        {% endfor %}
+                    {% endif %}
+                {% endwith %}
+
+                <div class="card">
+                    <div class="card-header bg-primary text-white">
+                        <h4 class="mb-0">Editar Datas da Reserva</h4>
+                    </div>
+                    <div class="card-body">
+                        <!-- Informações do Veículo -->
+                        <div class="row mb-4">
+                            <div class="col-md-4">
+                                <img src="{{ url_for('static', filename='images/cars/' + context.reserva.veiculo.imagem_url) if context.reserva.veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}" 
+                                     alt="{{ context.reserva.veiculo.marca }} {{ context.reserva.veiculo.modelo }}" 
+                                     class="img-fluid rounded">
+                            </div>
+                            <div class="col-md-8">
+                                <h5>{{ context.reserva.veiculo.marca }} {{ context.reserva.veiculo.modelo }}</h5>
+                                <p class="mb-1"><strong>Valor da Diária:</strong> €{{ "%.2f"|format(context.reserva.veiculo.valor_diaria) }}</p>
+                                <p class="mb-1"><strong>Valor Total Atual:</strong> €{{ "%.2f"|format(context.reserva.valor_total) }}</p>
+                                <p class="mb-0"><strong>Status:</strong> <span class="badge badge-success">{{ context.reserva.status }}</span></p>
+                            </div>
+                        </div>
+
+                        <hr>
+
+                        <!-- Formulário de Edição -->
+                        <form action="{{ url_for('editar_reserva', id=context.reserva.id) }}" method="post" id="formEditarReserva">
+                            <div class="alert alert-info">
+                                <i class="fa fa-info-circle"></i> 
+                                <strong>Atenção:</strong> Ao alterar as datas, o valor total será recalculado automaticamente.
+                            </div>
+
+                            <div class="row">
+                                <div class="col-md-6 form-group">
+                                    <label for="data_inicio"><i class="fa fa-calendar"></i> Data de Início *</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           name="data_inicio" 
+                                           id="data_inicio" 
+                                           value="{{ context.reserva.data_inicio }}"
+                                           min="{{ context.data_hoje }}"
+                                           required>
+                                    <small class="form-text text-muted">Data atual: {{ context.reserva.data_inicio }}</small>
+                                </div>
+
+                                <div class="col-md-6 form-group">
+                                    <label for="data_fim"><i class="fa fa-calendar"></i> Data de Fim *</label>
+                                    <input type="date" 
+                                           class="form-control" 
+                                           name="data_fim" 
+                                           id="data_fim" 
+                                           value="{{ context.reserva.data_fim }}"
+                                           min="{{ context.data_hoje }}"
+                                           required>
+                                    <small class="form-text text-muted">Data atual: {{ context.reserva.data_fim }}</small>
+                                </div>
+                            </div>
+
+                            <!-- Preview de Cálculo -->
+                            <div class="row" id="previewCalculo" style="display: none;">
+                                <div class="col-12">
+                                    <div class="alert alert-success">
+                                        <h5>Novo Cálculo:</h5>
+                                        <p class="mb-1"><strong>Quantidade de Dias:</strong> <span id="qtdDias">-</span></p>
+                                        <p class="mb-0"><strong>Novo Valor Total:</strong> €<span id="novoValor">-</span></p>
+                                    </div>
+                                </div>
+                            </div>
+
+                            <div class="row mt-4">
+                                <div class="col-md-6">
+                                    <a href="{{ url_for('minhas_reservas') }}" class="btn btn-secondary btn-block">
+                                        <i class="fa fa-arrow-left"></i> Voltar
+                                    </a>
+                                </div>
+                                <div class="col-md-6">
+                                    <button type="submit" class="btn btn-primary btn-block">
+                                        <i class="fa fa-save"></i> Salvar Alterações
+                                    </button>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+<!-- editar-reserva-section end -->
+
+<script>
+    // Calcular preview quando as datas mudarem
+    const dataInicio = document.getElementById('data_inicio');
+    const dataFim = document.getElementById('data_fim');
+    const valorDiaria = {{ context.reserva.veiculo.valor_diaria }};
+
+    function calcularPreview() {
+        if (dataInicio.value && dataFim.value) {
+            const inicio = new Date(dataInicio.value);
+            const fim = new Date(dataFim.value);
+            
+            const diffTime = fim - inicio;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            
+            if (diffDays > 0) {
+                const novoValor = diffDays * valorDiaria;
+                
+                document.getElementById('qtdDias').textContent = diffDays;
+                document.getElementById('novoValor').textContent = novoValor.toFixed(2);
+                document.getElementById('previewCalculo').style.display = 'block';
+            } else {
+                document.getElementById('previewCalculo').style.display = 'none';
+            }
+        }
+    }
+
+    dataInicio.addEventListener('change', calcularPreview);
+    dataFim.addEventListener('change', calcularPreview);
+
+    // Validação antes de submeter
+    document.getElementById('formEditarReserva').addEventListener('submit', function(e) {
+        const inicio = new Date(dataInicio.value);
+        const fim = new Date(dataFim.value);
+        
+        if (fim <= inicio) {
+            e.preventDefault();
+            alert('A data de fim deve ser posterior à data de início!');
+            return false;
+        }
+    });
+</script>
+
+<style>
+    .card {
+        border: none;
+        box-shadow: 0 0 20px rgba(0,0,0,0.1);
+    }
+    .card-header {
+        border-bottom: none;
+        padding: 20px;
+    }
+    .form-control:focus {
+        border-color: #667eea;
+        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+    }
+    .btn-primary {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        border: none;
+    }
+    .btn-primary:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+    }
+</style>
+{% endblock %}
