@@ -1,0 +1,354 @@
+<html lang="pt-pt">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>RentCar - Editar Veículo</title>
+
+    <!-- Bootstrap CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <style>
+        body {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 40px 0;
+        }
+
+        .admin-card {
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+
+        .admin-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+
+        .admin-body {
+            padding: 40px;
+        }
+
+        .section-title {
+            color: #667eea;
+            font-weight: 700;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 3px solid #667eea;
+        }
+
+        .form-label {
+            font-weight: 600;
+            color: #333;
+            margin-bottom: 8px;
+        }
+
+        .input-group-text {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+        }
+
+        .form-control, .form-select {
+            border: 2px solid #e0e0e0;
+            padding: 12px 15px;
+            border-radius: 10px;
+            transition: all 0.3s;
+        }
+
+        .form-control:focus, .form-select:focus {
+            border-color: #667eea;
+            box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            border: none;
+            padding: 15px 50px;
+            font-weight: 600;
+            border-radius: 10px;
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: #6c757d;
+            border: none;
+            padding: 15px 50px;
+            font-weight: 600;
+            border-radius: 10px;
+        }
+
+        .btn-secondary:hover {
+            background: #5a6268;
+        }
+
+        .info-badge {
+            background: #fff3cd;
+            border-left: 4px solid #ffc107;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .alert-warning-custom {
+            background: #fff3cd;
+            border: 1px solid #ffc107;
+            color: #856404;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 20px;
+        }
+
+        .vehicle-preview {
+            background: #f8f9fa;
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .vehicle-preview img {
+            width: 100%;
+            max-height: 300px;
+            object-fit: cover;
+            border-radius: 10px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            <div class="row justify-content-center mb-3">
+                <div class="col-lg-10 col-xl-9">
+                    {% for category, message in messages %}
+                      <div class="alert alert-{{ category }}"><i class="fas fa-check-circle me-2"></i>{{ message }}</div>
+                    {% endfor %}
+                </div>
+            </div>
+          {% endif %}
+        {% endwith %}
+
+        <div class="row justify-content-center">
+            <div class="col-lg-10 col-xl-9">
+                <div class="admin-card">
+                    <!-- Header -->
+                    <div class="admin-header">
+                        <h2><i class="fas fa-edit me-2"></i>Editar Veículo</h2>
+                        <p>Atualize os dados do veículo para reativá-lo</p>
+                    </div>
+
+                    <!-- Body -->
+                    <div class="admin-body">
+                        <!-- Preview do Veículo -->
+                        <div class="vehicle-preview">
+                            <div class="row">
+                                <div class="col-md-4">
+                                    <img src="{{ url_for('static', filename='images/cars/' + context.veiculo.imagem_url) if context.veiculo.imagem_url else url_for('static', filename='images/cars/default.jpg') }}"
+                                         alt="{{ context.veiculo.marca }} {{ context.veiculo.modelo }}">
+                                </div>
+                                <div class="col-md-8">
+                                    <h4>{{ context.veiculo.marca }} {{ context.veiculo.modelo }}</h4>
+                                    <p class="mb-1"><strong>Matrícula:</strong> {{ context.veiculo.matricula }}</p>
+                                    <p class="mb-1"><strong>Status:</strong>
+                                        <span class="badge bg-danger">INATIVO</span>
+                                    </p>
+                                    <p class="mb-0"><strong>Última atualização:</strong> {{ context.veiculo.data_cadastro.strftime('%d/%m/%Y') if context.veiculo.data_cadastro else 'N/A' }}</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Alerta -->
+                        <div class="alert-warning-custom">
+                            <i class="fas fa-exclamation-triangle me-2"></i>
+                            <strong>Atenção:</strong> Após atualizar as datas de revisão e inspeção dentro dos prazos válidos, o veículo será automaticamente reativado.
+                        </div>
+
+                        <!-- Formulário -->
+                        <form action="{{ url_for('editar_veiculo', id=context.veiculo.id) }}" method="post" enctype="multipart/form-data" id="editForm">
+
+                            <!-- Informações Básicas -->
+                            <h4 class="section-title"><i class="fas fa-info-circle me-2"></i>Informações Básicas</h4>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="marca" class="form-label">Marca *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-copyright"></i></span>
+                                        <input class="form-control" id="marca" name="marca" value="{{ context.veiculo.marca }}" type="text" required/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="modelo" class="form-label">Modelo *</label>
+                                    <div class="input-group">
+                                        <span class="input-group-text"><i class="fas fa-car"></i></span>
+                                        <input class="form-control" id="modelo" name="modelo" value="{{ context.veiculo.modelo }}" type="text" required/>
+                                    </div>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="categoria" class="form-label">Categoria *</label>
+                                    <select class="form-select" id="categoria" name="categoria" required>
+                                        <option value="Pequeno" {% if context.veiculo.categoria == 'Pequeno' %}selected{% endif %}>Pequeno</option>
+                                        <option value="Médio" {% if context.veiculo.categoria == 'Médio' %}selected{% endif %}>Médio</option>
+                                        <option value="Grande" {% if context.veiculo.categoria == 'Grande' %}selected{% endif %}>Grande</option>
+                                        <option value="SUV" {% if context.veiculo.categoria == 'SUV' %}selected{% endif %}>SUV</option>
+                                        <option value="Luxo" {% if context.veiculo.categoria == 'Luxo' %}selected{% endif %}>Luxo</option>
+                                    </select>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="transmissao" class="form-label">Transmissão *</label>
+                                    <select class="form-select" id="transmissao" name="transmissao" required>
+                                        <option value="Automatico" {% if context.veiculo.transmissao == 'Automatico' %}selected{% endif %}>Automático</option>
+                                        <option value="Manual" {% if context.veiculo.transmissao == 'Manual' %}selected{% endif %}>Manual</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="tipo_veiculo" class="form-label">Tipo de Veículo *</label>
+                                    <select class="form-select" id="tipo_veiculo" name="tipo_veiculo" required>
+                                        <option value="Carro" {% if context.veiculo.tipo_veiculo == 'Carro' %}selected{% endif %}>Carro</option>
+                                        <option value="Mota" {% if context.veiculo.tipo_veiculo == 'Mota' %}selected{% endif %}>Mota</option>
+                                    </select>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="capacidade_pessoas" class="form-label">Capacidade *</label>
+                                    <input class="form-control" type="number" name="capacidade_pessoas" id="capacidade_pessoas"
+                                           value="{{ context.veiculo.capacidade_pessoas }}" min="1" max="9" required>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Identificação -->
+                            <h4 class="section-title"><i class="fas fa-id-card me-2"></i>Identificação e Preço</h4>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="matricula" class="form-label">Matrícula *</label>
+                                    <input class="form-control" type="text" name="matricula" id="matricula"
+                                           value="{{ context.veiculo.matricula }}" required/>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="cor" class="form-label">Cor *</label>
+                                    <input class="form-control" type="text" name="cor" id="cor"
+                                           value="{{ context.veiculo.cor }}" required/>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="ano" class="form-label">Ano *</label>
+                                    <input class="form-control" type="number" name="ano" id="ano"
+                                           value="{{ context.veiculo.ano }}" min="1990" max="2030" required/>
+                                </div>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-6 mb-3">
+                                    <label for="valor_diaria" class="form-label">Valor Diária (€) *</label>
+                                    <input class="form-control" type="number" name="valor_diaria" id="valor_diaria"
+                                           value="{{ context.veiculo.valor_diaria }}" step="0.01" min="0" required>
+                                </div>
+
+                                <div class="col-md-6 mb-3">
+                                    <label for="kilometragem" class="form-label">Quilometragem</label>
+                                    <input class="form-control" type="number" name="kilometragem" id="kilometragem"
+                                           value="{{ context.veiculo.kilometragem }}" min="0"/>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Manutenção - SEÇÃO CRÍTICA -->
+                            <h4 class="section-title"><i class="fas fa-tools me-2"></i>Manutenção e Inspeção (IMPORTANTE)</h4>
+
+                            <div class="info-badge">
+                                <i class="fas fa-lightbulb me-2"></i>
+                                <strong>Para reativar o veículo, certifique-se que:</strong>
+                                <ul class="mb-0 mt-2">
+                                    <li>A última inspeção não pode ter mais de 1 ano</li>
+                                    <li>A próxima revisão deve ser uma data futura</li>
+                                </ul>
+                            </div>
+
+                            <div class="row mb-3">
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_ultima_revisao" class="form-label">Última Revisão *</label>
+                                    <input class="form-control" type="date" name="data_ultima_revisao" id="data_ultima_revisao"
+                                           value="{{ context.veiculo.data_ultima_revisao }}" max="{{ context.data_hoje }}" required/>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_proxima_revisao" class="form-label">Próxima Revisão *</label>
+                                    <input class="form-control" type="date" name="data_proxima_revisao" id="data_proxima_revisao"
+                                           value="{{ context.veiculo.data_proxima_revisao }}" min="{{ context.data_hoje }}" required/>
+                                </div>
+
+                                <div class="col-md-4 mb-3">
+                                    <label for="data_ultima_inspecao" class="form-label">Última Inspeção *</label>
+                                    <input class="form-control" type="date" name="data_ultima_inspecao" id="data_ultima_inspecao"
+                                           value="{{ context.veiculo.data_ultima_inspecao }}" max="{{ context.data_hoje }}" required/>
+                                </div>
+                            </div>
+
+                            <hr class="my-4">
+
+                            <!-- Imagem -->
+                            <h4 class="section-title"><i class="fas fa-image me-2"></i>Imagem do Veículo</h4>
+
+                            <div class="row mb-3">
+                                <div class="col-md-12 mb-3">
+                                    <label for="imagem" class="form-label">Nova Imagem (opcional)</label>
+                                    <input class="form-control" type="file" name="imagem" id="imagem" accept="image/*">
+                                    <small class="text-muted">Deixe em branco para manter a imagem atual</small>
+                                </div>
+                            </div>
+
+                            <!-- Botões -->
+                            <div class="d-flex justify-content-between mt-4">
+                                <a href="{{ url_for('veiculos_inativos') }}" class="btn btn-secondary">
+                                    <i class="fas fa-arrow-left me-2"></i>Cancelar
+                                </a>
+                                <button class="btn btn-primary" type="submit">
+                                    <i class="fas fa-save me-2"></i>Atualizar e Reativar
+                                </button>
+                            </div>
+
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Bootstrap JS -->
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/js/bootstrap.bundle.min.js"></script>
+
+    <script>
+        // Validações do formulário
+        document.getElementById('editForm').addEventListener('submit', function(e) {
+            const dataProxima = new Date(document.getElementById('data_proxima_revisao').value);
+            const dataUltima = new Date(document.getElementById('data_ultima_revisao').value);
+
+            if (dataProxima <= dataUltima) {
+                e.preventDefault();
+                alert('A data da próxima revisão deve ser posterior à última revisão!');
+                return false;
+            }
+        });
+    </script>
+</body>
+</html>

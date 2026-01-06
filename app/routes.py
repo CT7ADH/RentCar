@@ -402,6 +402,12 @@ def contact():
 
     return render_template("contact.html")
 
+
+"""
+########################################################
+ De aqui para a frente não faz parte do projecto final #
+########################################################
+"""
 ''' ---------------------------------------- Administração de veículos ---------------------------------------- '''
 @app.route("/admin", methods=["GET", "POST"])
 def admin():
@@ -448,6 +454,117 @@ def verificar_inspecoes_manual():
     quantidade, mensagem = VeiculoControler().check_is_activo()
     flash(mensagem, 'info')
     return redirect(url_for('admin'))
+
+''' ---------------------------------------- Gestão de Veículos Inativos ---------------------------------------- '''
+@app.route("/admin/veiculos-inativos")
+def veiculos_inativos():
+    """Lista todos os veículos inativos para gestão"""
+    try:
+        from app.model.Veiculo import Veiculo
+        from datetime import date, timedelta
+
+        # Buscar todos os veículos inativos
+        veiculos = Veiculo.query.filter_by(ativo=False).all()
+
+        # Adicionar informações sobre o motivo da desativação
+        hoje = date.today()
+        data_limite_inspecao = hoje - timedelta(days=365)
+
+        veiculos_info = []
+        for veiculo in veiculos:
+            motivos = []
+            if veiculo.data_ultima_inspecao < data_limite_inspecao:
+                dias_expirado = (hoje - veiculo.data_ultima_inspecao).days
+                motivos.append(f'Inspeção expirada há {dias_expirado} dias')
+
+            if veiculo.data_proxima_revisao < hoje:
+                dias_atrasado = (hoje - veiculo.data_proxima_revisao).days
+                motivos.append(f'Revisão atrasada há {dias_atrasado} dias')
+
+            veiculos_info.append({
+                'veiculo': veiculo,
+                'motivos': motivos
+            })
+
+        context = {
+            'veiculos_info': veiculos_info,
+            'total_inativos': len(veiculos)
+        }
+
+        return render_template("admin_veiculos_inativos.html", context=context)
+
+    except Exception as e:
+        print(f"Erro ao carregar veículos inativos: {e}")
+        flash('Erro ao carregar veículos inativos', 'danger')
+        return redirect(url_for('admin'))
+
+''' ---------------------------------------- Editar Veículo Inativo ---------------------------------------- '''
+@app.route("/admin/editar-veiculo/<int:id>", methods=["GET", "POST"])
+def editar_veiculo(id):
+    """Edita um veículo (normalmente usado para veículos inativos)"""
+    from app.model.Veiculo import Veiculo
+    from app.car_admin import atualizar_veiculo_no_banco, reativar_veiculo
+
+    if request.method == "POST":
+        try:
+            # 1. Extrair dados do formulário
+            dados, erro = extrair_dados_formulario(request.form)
+            if erro:
+                flash(erro, 'danger')
+                return redirect(url_for('editar_veiculo', id=id))
+
+            # 2. Validar todos os dados (passando o ID para permitir mesma matrícula)
+            valido, mensagem = validar_todos_dados(dados, veiculo_id=id)
+            if not valido:
+                flash(mensagem, 'danger')
+                return redirect(url_for('editar_veiculo', id=id))
+
+            # 3. Processar imagem (se enviada)
+            imagem = request.files.get('imagem')
+            sucesso, filename, mensagem = salvar_imagem(imagem, app.static_folder)
+            if not sucesso:
+                flash(mensagem, 'danger')
+                return redirect(url_for('editar_veiculo', id=id))
+
+            # 4. Atualizar veículo no banco
+            sucesso, mensagem = atualizar_veiculo_no_banco(id, dados, filename, db)
+            if not sucesso:
+                flash(mensagem, 'danger')
+                return redirect(url_for('editar_veiculo', id=id))
+
+            # 5. Tentar reativar o veículo
+            sucesso_reativacao, msg_reativacao = reativar_veiculo(id, db)
+            if sucesso_reativacao:
+                flash('Veículo atualizado e reativado com sucesso!', 'success')
+            else:
+                flash(f'Veículo atualizado! {msg_reativacao}', 'warning')
+
+            return redirect(url_for('veiculos_inativos'))
+
+        except Exception as e:
+            db.session.rollback()
+            flash(f'Erro ao atualizar veículo: {str(e)}', 'danger')
+            print(f"ERRO: {e}")
+            return redirect(url_for('editar_veiculo', id=id))
+
+    # GET - Mostrar formulário de edição
+    try:
+        veiculo = Veiculo.query.get(id)
+        if not veiculo:
+            flash('Veículo não encontrado!', 'danger')
+            return redirect(url_for('veiculos_inativos'))
+
+        context = {
+            'veiculo': veiculo,
+            'data_hoje': date.today().isoformat()
+        }
+
+        return render_template("admin_editar_veiculo.html", context=context)
+
+    except Exception as e:
+        print(f"Erro ao carregar veículo: {e}")
+        flash('Erro ao carregar veículo', 'danger')
+        return redirect(url_for('veiculos_inativos'))
 
 # @app.route('/dashboard')
 # @login_required

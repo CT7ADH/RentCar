@@ -7,6 +7,7 @@ from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
 
+
 # ========================
 # FUNÇÕES DE VALIDAÇÃO
 # ========================
@@ -18,14 +19,24 @@ def validar_campos_obrigatorios(marca, modelo, matricula):
     return True, ''
 
 
-def validar_matricula_existe(matricula):
+def validar_matricula_existe(matricula, veiculo_id=None):
     """
     Verifica se a matrícula já existe no banco.
-    IMPORTANTE: Import aqui para evitar circular imports
+    Args:
+        matricula (str): Matrícula a verificar
+        veiculo_id (int, optional): ID do veículo a excluir da verificação (para edição)
+    Returns:
+        tuple: (valido: bool, mensagem: str)
     """
     from app.model.Veiculo import Veiculo
 
-    if Veiculo.query.filter_by(matricula=matricula.upper()).first():
+    query = Veiculo.query.filter_by(matricula=matricula.upper())
+
+    # Se estiver editando, excluir o próprio veículo da verificação
+    if veiculo_id:
+        query = query.filter(Veiculo.id != veiculo_id)
+
+    if query.first():
         return False, 'Esta matrícula já está cadastrada!'
     return True, ''
 
@@ -131,11 +142,12 @@ def extrair_dados_formulario(form):
         return None, 'Erro nos dados fornecidos. Verifique os campos.'
 
 
-def validar_todos_dados(dados):
+def validar_todos_dados(dados, veiculo_id=None):
     """
     Executa todas as validações nos dados.
     Args:
         dados (dict): Dicionário com dados do veículo
+        veiculo_id (int, optional): ID do veículo (para edição)
     Returns:
         tuple: (valido: bool, mensagem: str)
     """
@@ -145,7 +157,7 @@ def validar_todos_dados(dados):
         return False, msg
 
     # Validar matrícula única
-    valido, msg = validar_matricula_existe(dados['matricula'])
+    valido, msg = validar_matricula_existe(dados['matricula'], veiculo_id)
     if not valido:
         return False, msg
 
@@ -194,3 +206,91 @@ def criar_veiculo_no_banco(dados, imagem_url, db):
 
     db.session.add(veiculo)
     db.session.commit()
+
+
+# ========================
+# FUNÇÕES PARA GESTÃO DE VEÍCULOS INATIVOS
+# ========================
+
+def atualizar_veiculo_no_banco(veiculo_id, dados, imagem_url, db):
+    """
+    Atualiza um veículo existente no banco de dados.
+    Args:
+        veiculo_id (int): ID do veículo a atualizar
+        dados (dict): Dicionário com dados do veículo
+        imagem_url (str|None): Nome do arquivo de imagem ou None (mantém atual se None)
+        db: Instância do SQLAlchemy
+    Returns:
+        tuple: (sucesso: bool, mensagem: str)
+    """
+    from app.model.Veiculo import Veiculo
+
+    try:
+        veiculo = Veiculo.query.get(veiculo_id)
+        if not veiculo:
+            return False, 'Veículo não encontrado!'
+
+        # Atualizar campos
+        veiculo.marca = dados['marca']
+        veiculo.modelo = dados['modelo']
+        veiculo.categoria = dados['categoria']
+        veiculo.transmissao = dados['transmissao']
+        veiculo.tipo_veiculo = dados['tipo_veiculo']
+        veiculo.capacidade_pessoas = dados['capacidade_pessoas']
+        veiculo.valor_diaria = dados['valor_diaria']
+        veiculo.matricula = dados['matricula']
+        veiculo.cor = dados['cor']
+        veiculo.ano = dados['ano']
+        veiculo.kilometragem = dados['kilometragem']
+        veiculo.data_ultima_revisao = dados['data_ultima_revisao']
+        veiculo.data_proxima_revisao = dados['data_proxima_revisao']
+        veiculo.data_ultima_inspecao = dados['data_ultima_inspecao']
+
+        # Atualizar imagem apenas se foi enviada uma nova
+        if imagem_url:
+            veiculo.imagem_url = imagem_url
+
+        db.session.commit()
+        return True, 'Veículo atualizado com sucesso!'
+
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Erro ao atualizar veículo: {str(e)}'
+
+
+def reativar_veiculo(veiculo_id, db):
+    """
+    Reativa um veículo após atualização de manutenções.
+    Args:
+        veiculo_id (int): ID do veículo
+        db: Instância do SQLAlchemy
+    Returns:
+        tuple: (sucesso: bool, mensagem: str)
+    """
+    from app.model.Veiculo import Veiculo
+    from datetime import date, timedelta
+
+    try:
+        veiculo = Veiculo.query.get(veiculo_id)
+        if not veiculo:
+            return False, 'Veículo não encontrado!'
+
+        hoje = date.today()
+        data_limite_inspecao = hoje - timedelta(days=365)
+
+        # Verificar se pode ser reativado
+        if veiculo.data_ultima_inspecao < data_limite_inspecao:
+            return False, 'Inspeção ainda está expirada! Atualize a data da última inspeção.'
+
+        if veiculo.data_proxima_revisao < hoje:
+            return False, 'Revisão ainda está atrasada! Atualize a data da próxima revisão.'
+
+        # Reativar
+        veiculo.ativo = True
+        db.session.commit()
+
+        return True, 'Veículo reativado com sucesso!'
+
+    except Exception as e:
+        db.session.rollback()
+        return False, f'Erro ao reativar veículo: {str(e)}'
