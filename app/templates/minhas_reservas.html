@@ -19,17 +19,14 @@
 <!-- inner-page-banner end -->
 
 <!-- minhas-reservas-section start -->
-<section class="pt-120 pb-120">
+<section class="car-search-section pt-120 pb-120">
     <div class="container">
         <!-- Flash messages -->
         {% with messages = get_flashed_messages(with_categories=true) %}
             {% if messages %}
                 {% for category, message in messages %}
-                    <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                    <div class="alert alert-{{ category }}">
                         {{ message }}
-                        <button type="button" class="close" data-dismiss="alert" aria-label="Close">
-                            <span aria-hidden="true">&times;</span>
-                        </button>
                     </div>
                 {% endfor %}
             {% endif %}
@@ -168,7 +165,7 @@
                 {% else %}
                     <div class="alert alert-info text-center">
                         <h4><i class="fa fa-info-circle"></i> Você ainda não tem reservas</h4>
-                        <p>Explore nossos veículos e faça sua primeira reserva!</p>
+                        <p>Explore os nossos veículos e faça a sua primeira reserva!</p>
                         <a href="{{ url_for('car_list') }}" class="cmn-btn mt-3">Ver Veículos Disponíveis</a>
                     </div>
                 {% endif %}
@@ -192,4 +189,5 @@
         font-size: 12px;
     }
 </style>
+
 {% endblock %}

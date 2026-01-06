@@ -1,12 +1,12 @@
 # -*- coding: utf-8 -*-
-# 1. Importações do Flask e Python
+# 1. Importações
 from app.model.Veiculo import Veiculo
 
 class VeiculoControler():
     def __init__(self):
         self.veiculo_model = Veiculo()
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def check_is_activo(self):
         ''' Verificar se os veículos têm as inspeções e revisões em dia'''

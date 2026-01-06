@@ -64,7 +64,7 @@ class Veiculo(db.Model):
     def __repr__(self):
         return f'<Veiculo {self.marca} {self.modelo} - {self.matricula}>'
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def get_all(self, limit=None):
         """

@@ -1,7 +1,7 @@
 # -*- coding: utf-8 -*-
 # 1. Importações do Flask e Python
 from app import app, db
-from flask import render_template, url_for, request, redirect, flash, session, jsonify
+from flask import render_template, url_for, request, redirect, flash, jsonify
 from datetime import datetime, date
 from flask_login import login_required, current_user
 
@@ -9,7 +9,7 @@ from flask_login import login_required, current_user
 from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_imagem, criar_veiculo_no_banco
 
 # 3. Importações dos Controllers
-from app.controller import ClienteControler, VeiculoControler, ReservaControler, AuthController, PayMethodControler
+from app.controller import VeiculoControler, ReservaControler, AuthController, PayMethodControler
 
 ''' ---------------------------------------- Página Inicial ---------------------------------------- '''
 @app.route("/")
@@ -127,8 +127,6 @@ def logout():
 ''' ---------------------------------------- Registro de novos clientes ---------------------------------------- '''
 @app.route("/registration", methods=['GET', 'POST'])
 def registration():
-    # if current_user.is_authenticated:
-    #     return redirect(url_for('registration'))
 
     if request.method == "POST":
 
@@ -192,7 +190,7 @@ def minhas_reservas():
 @login_required
 def cria_reserva(id):
     '''
-    Página para criar uma nova reserva
+    Página para criar uma reserva
     '''
     if request.method == "POST":
         try:
@@ -250,7 +248,7 @@ def cria_reserva(id):
         'data_hoje': date.today().isoformat()
     }
 
-    return render_template("reserva1.html", context=context)
+    return render_template("criar_reserva.html", context=context)
 
 ''' ---------------------------------------- Editar Reserva ---------------------------------------- '''
 @app.route("/editar-reserva/<int:id>", methods=["GET", "POST"])

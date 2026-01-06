@@ -4,15 +4,19 @@
     <option name="autoReloadType" value="SELECTIVE" />
   </component>
   <component name="ChangeListManager">
-    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="05/01/2026&#10;correções">
-      <change afterPath="$PROJECT_DIR$/app/templates/editar_reserva.html" afterDir="false" />
-      <change afterPath="$PROJECT_DIR$/app/templates/minhas_reservas.html" afterDir="false" />
+    <list default="true" id="b8fb007d-b798-466d-840d-09e7fc942874" name="Changes" comment="06/01/2026&#10;Criadas as Reservas">
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/Auth.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/Auth.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/Cliente.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/Cliente.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/PayMethod.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/PayMethod.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/controller/Reserva.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/Reserva.py" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/model/Reserva.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/model/Reserva.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/controller/Veiculo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/controller/Veiculo.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/Cliente.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/model/Cliente.py" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/model/Veiculo.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/model/Veiculo.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/routes.py" beforeDir="false" afterPath="$PROJECT_DIR$/app/routes.py" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/app/templates/base.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/base.html" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/app/templates/reserva1.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/reserva1.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/minhas_reservas.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/minhas_reservas.html" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/app/templates/reserva1.html" beforeDir="false" afterPath="$PROJECT_DIR$/app/templates/criar_reserva.html" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/instance/database.db" beforeDir="false" afterPath="$PROJECT_DIR$/instance/database.db" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
@@ -421,7 +425,15 @@
       <option name="project" value="LOCAL" />
       <updated>1767669865614</updated>
     </task>
-    <option name="localTasksCounter" value="35" />
+    <task id="LOCAL-00035" summary="06/01/2026&#10;Criadas as Reservas">
+      <option name="closed" value="true" />
+      <created>1767722086234</created>
+      <option name="number" value="00035" />
+      <option name="presentableId" value="LOCAL-00035" />
+      <option name="project" value="LOCAL" />
+      <updated>1767722086234</updated>
+    </task>
+    <option name="localTasksCounter" value="36" />
     <servers />
   </component>
   <component name="TypeScriptGeneratedFilesManager">
@@ -457,7 +469,8 @@
     <MESSAGE value="05/01/2026&#10;criada função 'check is activo'" />
     <MESSAGE value="05/01/2026&#10;alterações VeiculoControler" />
     <MESSAGE value="05/01/2026&#10;correções" />
-    <option name="LAST_COMMIT_MESSAGE" value="05/01/2026&#10;correções" />
+    <MESSAGE value="06/01/2026&#10;Criadas as Reservas" />
+    <option name="LAST_COMMIT_MESSAGE" value="06/01/2026&#10;Criadas as Reservas" />
   </component>
   <component name="com.intellij.coverage.CoverageDataManagerImpl">
     <SUITE FILE_PATH="coverage/RentCar$routes.coverage" NAME="routes Coverage Results" MODIFIED="1761987851126" SOURCE_PROVIDER="com.intellij.coverage.DefaultCoverageFileProvider" RUNNER="coverage.py" COVERAGE_BY_TEST_ENABLED="false" COVERAGE_TRACING_ENABLED="false" WORKING_DIRECTORY="$PROJECT_DIR$/app" />

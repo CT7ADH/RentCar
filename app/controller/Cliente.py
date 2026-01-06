@@ -3,12 +3,12 @@
 from app.model.Cliente import Cliente
 
 class ClienteControler():
-    """Controller para gerenciar operações de clientes"""
+    """Controller para gerir operações de clientes"""
 
     def __init__(self):
         self.cliente_model = Cliente()
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def validate_email(self, email):
         """

@@ -1,7 +1,6 @@
 # -*- coding: utf-8 -*-
+# 1. Importações
 from app.model.PayMethod import PayMethod
-from app import db
-
 
 class PayMethodControler():
     """Controller para gerenciar métodos de pagamento"""
@@ -9,7 +8,7 @@ class PayMethodControler():
     def __init__(self):
         self.method_pay_model = PayMethod()
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def get_all_method_pay(self):
         """

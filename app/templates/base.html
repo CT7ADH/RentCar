@@ -48,25 +48,12 @@
                     <ul class="navbar-nav main-menu m-auto">
                         <li><a href="{{ url_for('root')}}">Início</a></li>
                         <li><a href="{{ url_for('car_list')}}">Carros</a></li>
-
                         {% if current_user.is_authenticated %}
                             <!-- Menu para usuário logado -->
-                            <li><a href="{{ url_for('minhas_reservas')}}">As minhas reservas</a></li>
+                            <li><a href="{{ url_for('minhas_reservas')}}"><i class="fa fa-calendar"></i> As minhas reservas</a></li>
                             <li><a href="{{ url_for('contact')}}">Contacte-nos</a></li>
-                            <li class="nav-item dropdown">
-                                <a class="nav-link dropdown-toggle" href="#" id="userDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                    <i class="fa fa-user"></i> {{ current_user.name }}
-                                </a>
-                                <div class="dropdown-menu" aria-labelledby="userDropdown">
-                                    <a class="dropdown-item" href="{{ url_for('minhas_reservas')}}">
-                                        <i class="fa fa-calendar"></i> Minhas Reservas
-                                    </a>
-                                    <div class="dropdown-divider"></div>
-                                    <a class="dropdown-item" href="{{ url_for('logout')}}">
-                                        <i class="fa fa-sign-out"></i> Logout
-                                    </a>
-                                </div>
-                            </li>
+                            <li><a href="#" style="pointer-events: none; color: #667eea;"><i class="fa fa-user"></i> {{ current_user.name }}</a></li>
+                            <li><a href="{{ url_for('logout')}}"><i class="fa fa-sign-out"></i> Logout</a></li>
                         {% else %}
                             <!-- Menu para usuário não logado -->
                             <li><a href="{{ url_for('login')}}">Iniciar sessão</a></li>

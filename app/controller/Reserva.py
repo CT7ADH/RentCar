@@ -7,12 +7,12 @@ from datetime import datetime, date
 from sqlalchemy import and_, or_
 
 class ReservaControler():
-    """Controller para gerenciar operações de reservas"""
+    """Controller para gerir as reservas"""
 
     def __init__(self):
         self.reserva_model = Reserva()
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def verificar_disponibilidade(self, veiculo_id, data_inicio, data_fim, reserva_id_excluir=None):
         """
@@ -271,8 +271,8 @@ class ReservaControler():
         """
         Cancela uma reserva.
         Args:
-            reserva_id (int): ID da reserva
-            cliente_id (int): ID do cliente (para validação)
+            reserva_id (int): ‘ID’ da reserva
+            cliente_id (int): ‘ID’ do cliente (para validação)
             motivo (str, optional): Motivo do cancelamento
         Returns:
             tuple: (sucesso: bool, mensagem: str)

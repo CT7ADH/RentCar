@@ -56,7 +56,7 @@
 
                             <div class="content-block">
                                 <h3 class="title">Datas da Reserva *</h3>
-                                <div class="alert alert-info">
+                                <div class="alert--info">
                                     <i class="fa fa-info-circle"></i> Selecione as datas de início e fim da sua reserva. O valor total será calculado automaticamente.
                                 </div>
                                 <div class="row">
@@ -82,7 +82,7 @@
 
                                 <!-- Preview do Cálculo -->
                                 <div id="calculoPreview" style="display: none;">
-                                    <div class="alert alert-success">
+                                    <div class="alert--success">
                                         <h5>Resumo da Reserva:</h5>
                                         <p class="mb-1"><strong>Quantidade de Dias:</strong> <span id="qtdDias">-</span> dias</p>
                                         <p class="mb-1"><strong>Valor por Dia:</strong> €{{ "%.2f"|format(context.car.valor_diaria) }}</p>
@@ -242,35 +242,35 @@
 </script>
 
 <style>
-    .alert {
-        border-radius: 8px;
+    /* Centralizar texto do select */
+    select.form-control,
+    select {
+        text-align: center;
+        text-align-last: center;
+    }
+
+    /* Centralizar opções do select */
+    select.form-control option,
+    select option {
+        text-align: center;
+    }
+
+    /* Alertas customizados */
+    .alert--info {
+        background: #d1ecf1;
+        border: 1px solid #bee5eb;
+        color: #0c5460;
         padding: 15px;
+        border-radius: 5px;
         margin-bottom: 20px;
     }
-    .widget {
-        background: #f8f9fa;
-        padding: 20px;
-        border-radius: 8px;
+    .alert--success {
+        background: #d4edda;
+        border: 1px solid #c3e6cb;
+        color: #155724;
+        padding: 15px;
+        border-radius: 5px;
         margin-bottom: 20px;
-    }
-    .widget-title {
-        color: #667eea;
-        border-bottom: 2px solid #667eea;
-        padding-bottom: 10px;
-        margin-bottom: 15px;
-    }
-    .list-group-item {
-        border: none;
-        padding: 10px 0;
-        background: transparent;
-    }
-    .list-group-item i {
-        color: #667eea;
-        margin-right: 10px;
-    }
-    .form-control:focus {
-        border-color: #667eea;
-        box-shadow: 0 0 0 0.2rem rgba(102, 126, 234, 0.25);
     }
 </style>
 {% endblock %}

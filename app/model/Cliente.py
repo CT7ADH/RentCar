@@ -59,7 +59,7 @@ class Cliente(db.Model, UserMixin):
     def __repr__(self):
         return f'<Cliente {self.name} - {self.email}>'
 
-    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+    # ==================== MÉTODOS DE INSTÂNCIA ====================
 
     def set_password(self, password):
         """

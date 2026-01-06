@@ -1,19 +1,22 @@
 # -*- coding: utf-8 -*-
+# 1. Importações
 from app.model.Cliente import Cliente
 from flask_login import login_user, logout_user
 from app import db
 
 class AuthController:
 
+    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+
     @staticmethod
     def registrar_usuario(name, email, password, re_pass, phone, birth_date, city, postal_code, genero):
         """
-        Registra um novo usuário no sistema
+        Registra um novo utilizador no sistema
         Retorna: (sucesso: bool, mensagem: str)
         """
-        # Verifica se usuário já existe
+        # Verifica se utilizador já existe
         if Cliente.query.filter_by(name=name).first():
-            return False, 'Nome de usuário já existe!'
+            return False, 'Nome de utilizador já existe!'
 
         if Cliente.query.filter_by(email=email).first():
             return False, 'Email já cadastrado!'
@@ -27,7 +30,7 @@ class AuthController:
         if not name or not email:
             return False, 'Todos os campos são obrigatórios!'
 
-        # Cria novo usuário
+        # Cria utilizador
         try:
             novo_usuario = Cliente(name=name, email=email, phone=phone, birth_date=birth_date, city=city, postal_code=postal_code, genero=genero, pass_hash=password)
             novo_usuario.set_password(password)
@@ -38,12 +41,12 @@ class AuthController:
             return True, 'Registro realizado com sucesso!'
         except Exception as e:
             db.session.rollback()
-            return False, f'Erro ao registrar usuário: {str(e)}'
+            return False, f'Erro ao registrar utilizador: {str(e)}'
 
     @staticmethod
     def autenticar_usuario(email, password):
         """
-        Autentica um usuário
+        Autentica um utilizador
         Retorna: (sucesso: bool, mensagem: str, usuario: Usuario ou None)
         """
         if not email or not password:
@@ -52,7 +55,7 @@ class AuthController:
         usuario = Cliente.query.filter_by(email=email).first()
 
         if not usuario:
-            return False, 'Usuário não encontrado!', None
+            return False, 'Utilizador não encontrado!', None
 
         if not usuario.check_password(password):
             return False, 'Senha incorreta!', None
@@ -63,6 +66,6 @@ class AuthController:
 
     @staticmethod
     def fazer_logout():
-        """Realiza o logout do usuário"""
+        """Realiza o logout do utilizador"""
         logout_user()
         return True, 'Logout realizado com sucesso!'
