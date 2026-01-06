@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+# 1. Importações
 from datetime import datetime, date, timedelta
 from app import db
 
-''' Classe Veiculo para registar os Veiculos e seus dados'''
 class Veiculo(db.Model):
+    """Modelo para registar veículos e os seus dados"""
+
     __tablename__ = 'veiculos'
 
+    # Campos do modelo
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     marca = db.Column(db.String(50), nullable=False)
     modelo = db.Column(db.String(50), nullable=False)
@@ -52,40 +55,83 @@ class Veiculo(db.Model):
             'data_cadastro': self.data_cadastro.isoformat() if self.data_cadastro else None
         }
 
-        # Se foram especificados campos específicos, retorna apenas esses
+        # Se forem especificados campos específicos, retorna apenas esses
         if campos:
             return {campo: dados_completos[campo] for campo in campos if campo in dados_completos}
 
         return dados_completos
 
-    ''' ## READ ## '''
-    def get_all(self, limit):
-        '''Devolde todos os Veiculos'''
-        try:
-            if limit is None:
-                res = db.session.query(Veiculo).all()
-            else:
-                res = db.session.query(Veiculo).order_by(Veiculo.data_cadastro).limit(limit).all()
-        except Exception as e:
-            res = []
-            print(e)
-        finally:
-            db.session.close()
-            return res
+    def __repr__(self):
+        return f'<Veiculo {self.marca} {self.modelo} - {self.matricula}>'
 
-    def get_by_id(self, id):
-        ''' Devolde o Veículo com ID? '''
+    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
+
+    def get_all(self, limit=None):
+        """
+        Retorna todos os veículos.
+        Args:
+            limit (int, optional): Número máximo de veículos
+        Returns:
+            list: Lista de objetos Veiculo
+        """
         try:
-            res = db.session.query(Veiculo).filter(Veiculo.id==id).first()
+            if limit:
+                res = db.session.query(Veiculo).order_by(Veiculo.data_cadastro.desc()).limit(limit)
+            else:
+                res = db.session.query(Veiculo).order_by(Veiculo.data_cadastro.desc())
+            return res.all()
         except Exception as e:
-            res = []
-            print(f"Erro ao buscar veículo por ID: {e}")
+            print(f"Erro ao buscar todos os veículos: {e}")
+            return []
         finally:
             db.session.close()
-            return res
+
+    def get_all_activo(self, limit=None):
+        """
+        Retorna todos os veículos com a revisão e inspeção em dias.
+        Args:
+            limit (int, optional): Número máximo de veículos
+        Returns:
+            list: Lista de objetos Veiculo
+        """
+        try:
+            if limit:
+                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).order_by(Veiculo.data_cadastro.desc()).limit(limit)
+            else:
+                res = db.session.query(Veiculo).filter(Veiculo.ativo == True).order_by(Veiculo.data_cadastro.desc())
+            return res.all()
+        except Exception as e:
+            print(f"Erro ao buscar todos os veículos ativos: {e}")
+            return []
+        finally:
+            db.session.close()
+
+
+    def get_by_id(self, veiculo_id):
+        """
+        Retorna o veículo com o ID especificado.
+        Args:
+            veiculo_id (int): ID do veículo
+        Returns:
+            Veiculo: Objeto Veiculo ou None
+        """
+        try:
+            #res = db.session.query(Veiculo).filter(Veiculo.id==id).first()
+            return db.session.query(Veiculo).get(veiculo_id)
+        except Exception as e:
+            print(f"Erro ao buscar veículo por ID {veiculo_id}: {e}")
+            return None
+        finally:
+            db.session.close()
 
     def get_search_type(self, arg_search):
-        ''' Lista as variáveis para o segundo filtro dinamicamente '''
+        """
+        Lista valores únicos para um campo específico (para filtros dinâmicos).
+        Args:
+            arg_search (str): Nome do campo
+        Returns:
+            list: Lista de valores únicos
+        """
         try:
             # Colunas permitidas para busca (White List por segurança)
             colunas_validas = [
@@ -102,21 +148,22 @@ class Veiculo(db.Model):
             else:
                 # Caso padrão: retorna todos os objetos Veiculo
                 res = db.session.query(Veiculo).all()
-
+            return [resultado[0] for resultado in res]
         except Exception as e:
-            res = []
             print(f"Erro na busca: {e}")
+            return []
         finally:
             db.session.close()
 
-            # Lógica de conversão simplificada
-            if res and not isinstance(res[0], Veiculo):
-                return [indice[0] for indice in res]
-            return res
-
-
     def get_veiculos_by_filter(self, tipo_filtro, valor_filtro):
-        """Busca veículos baseado no filtro selecionado de forma dinâmica"""
+        """
+        Busca veículos filtrados dinamicamente.
+        Args:
+            tipo_filtro (str): Campo pelo qual filtrar
+            valor_filtro: Valor do filtro
+        Returns:
+            list: Lista de objetos Veiculo
+        """
         try:
             # 1. Iniciamos a query base (sempre ativos)
             query = db.session.query(Veiculo).filter(Veiculo.ativo == True)
@@ -137,13 +184,13 @@ class Veiculo(db.Model):
                 coluna = getattr(Veiculo, tipo_filtro)
 
                 # Conversão de tipo necessária para capacidade
-                valor = int(valor_filtro) if tipo_filtro == "capacidade_pessoas" else valor_filtro
+                if tipo_filtro == "capacidade_pessoas":
+                    valor_filtro = int(valor_filtro)
 
                 # Aplica o filtro e a ordenação dinamicamente
-                query = query.filter(coluna == valor).order_by(coluna)
+                res = query.filter(coluna == valor_filtro).order_by(coluna)
 
-            return query.all()
-
+            return res.all()
         except Exception as e:
             print(f"Erro ao filtrar veículos: {e}")
             return []
@@ -152,7 +199,9 @@ class Veiculo(db.Model):
 
     def get_categorias_ativas(self):
         """
-        Retorna lista de categorias únicas de veículos ativos.
+        Retorna categorias únicas de veículos ativos.
+        Returns:
+            list: Lista de categorias
         """
         try:
             categorias = db.session.query(Veiculo.categoria).filter(Veiculo.ativo == True) \
@@ -165,19 +214,18 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
 
-    ''' ### UPDATE ### '''
     def check_is_activo(self):
         """
-        Verifica se as inspeções e as revisões estão expiradas.
+        Verifica e desativa veículos com inspeções/revisões expiradas.
+        Returns:
+            tuple: (quantidade_desativados, mensagem)
         """
         try:
             hoje = date.today()
             data_limite_inspecao = hoje - timedelta(days=365)
 
             # Busca veículos com problemas
-            veiculos_problematicos = db.session.query(Veiculo).filter(
-                Veiculo.ativo == True,
-                db.or_(
+            veiculos_problematicos = db.session.query(Veiculo).filter(Veiculo.ativo == True,db.or_(
                     Veiculo.data_ultima_inspecao < data_limite_inspecao,
                     Veiculo.data_proxima_revisao < hoje
                 )

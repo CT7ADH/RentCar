@@ -2,6 +2,7 @@
 """
 Módulo de Administração de Veículos
 """
+# 1. Importações
 from datetime import datetime
 from werkzeug.utils import secure_filename
 import os
@@ -18,8 +19,11 @@ def validar_campos_obrigatorios(marca, modelo, matricula):
 
 
 def validar_matricula_existe(matricula):
-    """Verifica se a matrícula já existe no banco"""
-    from tests.migrate import Veiculo
+    """
+    Verifica se a matrícula já existe no banco.
+    IMPORTANTE: Import aqui para evitar circular imports
+    """
+    from app.model.Veiculo import Veiculo
 
     if Veiculo.query.filter_by(matricula=matricula.upper()).first():
         return False, 'Esta matrícula já está cadastrada!'
@@ -47,9 +51,12 @@ def validar_ano(ano):
 
 def salvar_imagem(imagem, static_folder):
     """
-    Salva a imagem no servidor
-
-    Retorna: (sucesso, nome_arquivo, mensagem_erro)
+    Salva a imagem no servidor.
+    Args:
+        imagem: Arquivo de imagem do Flask
+        static_folder: Pasta static da aplicação
+    Returns:
+        tuple: (sucesso: bool, nome_arquivo: str|None, mensagem_erro: str)
     """
     if not imagem or not imagem.filename:
         return True, None, ''
@@ -70,7 +77,7 @@ def salvar_imagem(imagem, static_folder):
         return False, None, 'Imagem muito grande! Máximo 5MB.'
 
     try:
-        # Gerar nome único
+        # Gerar nome único com timestamp
         timestamp = datetime.now().strftime('%Y%m%d_%H%M%S')
         filename = secure_filename(imagem.filename)
         filename = f"{timestamp}_{filename}"
@@ -94,7 +101,13 @@ def salvar_imagem(imagem, static_folder):
 # ========================
 
 def extrair_dados_formulario(form):
-    """Extrai os dados do formulário"""
+    """
+    Extrai e processa dados do formulário.
+    Args:
+        form: Objeto request.form do Flask
+    Returns:
+        tuple: (dados: dict|None, erro: str|None)
+    """
     try:
         dados = {
             'marca': form["marca"].strip().upper(),
@@ -114,11 +127,18 @@ def extrair_dados_formulario(form):
         }
         return dados, None
     except (ValueError, KeyError) as e:
+        print(f"Erro ao extrair dados do formulário: {e}")
         return None, 'Erro nos dados fornecidos. Verifique os campos.'
 
 
 def validar_todos_dados(dados):
-    """Executa todas as validações nos dados"""
+    """
+    Executa todas as validações nos dados.
+    Args:
+        dados (dict): Dicionário com dados do veículo
+    Returns:
+        tuple: (valido: bool, mensagem: str)
+    """
     # Validar campos obrigatórios
     valido, msg = validar_campos_obrigatorios(dados['marca'], dados['modelo'], dados['matricula'])
     if not valido:
@@ -143,8 +163,16 @@ def validar_todos_dados(dados):
 
 
 def criar_veiculo_no_banco(dados, imagem_url, db):
-    """Cria o veículo no banco de dados"""
-    from tests.migrate import Veiculo
+    """
+    Cria o veículo no banco de dados.
+    Args:
+        dados (dict): Dicionário com dados do veículo
+        imagem_url (str|None): Nome do arquivo de imagem ou None
+        db: Instância do SQLAlchemy
+    Raises:
+        Exception: Se houver erro ao salvar no banco
+    """
+    from app.model.Veiculo import Veiculo
 
     veiculo = Veiculo(
         marca=dados['marca'],

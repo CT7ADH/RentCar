@@ -11,7 +11,6 @@ from app.car_admin import extrair_dados_formulario, validar_todos_dados, salvar_
 # 3. Importações dos Controllers
 from app.controller import ClienteControler, VeiculoControler, ReservaControler, AuthController, PayMethodControler
 
-
 ''' ---------------------------------------- Página Inicial ---------------------------------------- '''
 @app.route("/")
 @app.route("/index", methods=["GET", "POST"])
@@ -26,7 +25,7 @@ def root():
 
         # Opcional: registrar em log ou mostrar flash message apenas se houver desativações
         if quantidade > 0:
-            print(f"⚠️ ATENÇÃO: {mensagem}")
+            print(f"ATENÇÃO: {mensagem}")
             #flash(mensagem, 'warning')  # avisa o usuário
     except Exception as e:
         print(f"Erro na verificação automática: {e}")
@@ -40,14 +39,13 @@ def root():
         pass
     else:   # Method GET:> mostra todos os veículos
 
-        veiculos = VeiculoControler().get_all(limit=6)
+        veiculos = VeiculoControler().get_all_activo(limit=10)
         categories = VeiculoControler().get_used_categorias()
         context = {
             'veiculos': veiculos,
             'categories': categories,
         }
         return render_template("index.html", context=context)
-
 
 ''' ---------------------------------------- Listagem de veículos com filtros ---------------------------------------- '''
 @app.route("/car_list", methods=["GET", "POST"])
@@ -67,7 +65,7 @@ def car_list():
         if filtro_valor and filtro_valor != "":
             veiculos_filtrados = VeiculoControler().get_veiculos_filtrados(search_type, filtro_valor)
         else:
-            # Se só selecionou o tipo mas não o valor, mostrar todos
+            # Se só selecionou o tipo, mas não o valor, mostrar todos
             veiculos_filtrados = VeiculoControler().get_all(limit=None)
 
         context = {
@@ -81,7 +79,7 @@ def car_list():
             "car_list.html", context=context)
     else:   # Method GET:>
         # GET - mostra todos os veículos
-        veiculos = VeiculoControler().get_all(limit=None)
+        veiculos = VeiculoControler().get_all_activo(limit=None)
         search_result = []
         categories = VeiculoControler().get_used_categorias()
         context = {
@@ -90,7 +88,6 @@ def car_list():
             'categories': categories,
         }
         return render_template("car_list.html", context=context)
-
 
 ''' ---------------------------------------- Rota de login ---------------------------------------- '''
 @app.route("/login", methods=["GET", "POST"])
@@ -118,7 +115,6 @@ def login():
     else:   # Method GET:>
         return render_template('login.html', context={})
 
-
 ''' ---------------------------------------- Logout da sessão de usuário ---------------------------------------- '''
 @app.route("/logout")
 @login_required
@@ -127,7 +123,6 @@ def logout():
     sucesso, mensagem = AuthController.fazer_logout()
     flash(mensagem, 'info')
     return redirect(url_for('login'))
-
 
 ''' ---------------------------------------- Registro de novos clientes ---------------------------------------- '''
 @app.route("/registration", methods=['GET', 'POST'])
@@ -191,16 +186,11 @@ def cria_reserva(id):
     }
     return render_template("reserva1.html", context=context)
 
-
-
-
 ''' ---------------------------------------- Página de contato ---------------------------------------- '''
 @app.route("/contact")
 def contact():
 
     return render_template("contact.html")
-
-
 
 ''' ---------------------------------------- Administração de veículos ---------------------------------------- '''
 @app.route("/admin", methods=["GET", "POST"])

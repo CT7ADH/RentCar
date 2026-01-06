@@ -1,11 +1,14 @@
 # -*- coding: utf-8 -*-
+# 1. Importações
 from datetime import datetime
 from app import db
 
-''' Classe Reserva para registar as Reservas'''
 class Reserva(db.Model):
+    """ Modelo para registar as Reservas"""
+
     __tablename__ = 'reservas'
 
+    # Campos do modelo
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
     cliente_id = db.Column(db.Integer, db.ForeignKey('clientes.id'), nullable=False)
     veiculo_id = db.Column(db.Integer, db.ForeignKey('veiculos.id'), nullable=False)
