@@ -106,7 +106,6 @@ class Veiculo(db.Model):
         finally:
             db.session.close()
 
-
     def get_by_id(self, veiculo_id):
         """
         Retorna o veículo com o ID especificado.

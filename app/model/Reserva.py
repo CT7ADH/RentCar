@@ -22,3 +22,6 @@ class Reserva(db.Model):
     data_reserva = db.Column(db.DateTime, default=datetime.utcnow)
     data_cancelamento = db.Column(db.DateTime, nullable=True)
     motivo_cancelamento = db.Column(db.Text, nullable=True)
+
+
+    # ==================== MÉTODOS DE CLASSE (CLASS METHODS) ====================
